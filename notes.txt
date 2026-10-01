@@ -1,0 +1,66 @@
+minecraft-landscape/
+├── public/
+│   └── textures/
+│       └── default/
+│
+├── src/
+│   ├── main.ts
+│   │
+│   ├── world/
+│   │   ├── Block.ts
+│   │   ├── Chunk.ts
+│   │   ├── World.ts
+│   │   ├── ChunkManager.ts
+│   │   └── WorldGenerator.ts
+│   │
+│   ├── generation/
+│   │   ├── Noise.ts
+│   │   ├── TerrainGenerator.ts
+│   │   ├── BiomeGenerator.ts
+│   │   └── StructureGenerator.ts
+│   │
+│   ├── rendering/
+│   │   ├── Renderer.ts
+│   │   ├── Camera.ts
+│   │   ├── MeshBuilder.ts
+│   │   ├── ChunkMesh.ts
+│   │   ├── TextureAtlas.ts
+│   │   └── shaders/
+│   │       ├── terrain.vert
+│   │       └── terrain.frag
+│   │
+│   └── resources/
+│       ├── TexturePack.ts
+│       ├── TexturePackLoader.ts
+│       └── BlockTextureMap.ts
+│
+├── index.html
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
+
+src/
+  main.ts                  bootstrap + frame loop
+  config.ts                chunk size, height, sea level, render distance, scroll speed, seed
+  blocks/
+    BlockRegistry.ts       id → BlockType
+    blocks.ts              AIR, GRASS, DIRT, STONE, SAND, SNOW, WATER, LOG, LEAVES…
+  world/
+    World.ts               chunk map, get/set block by world coords, chunk lifecycle
+    Chunk.ts               voxel storage, coords, state
+    ChunkStreamer.ts       camera X → which chunks to generate/mesh/unload, per-frame budget
+  generation/
+    WorldGenerator.ts      runs the pipeline for one chunk
+    BiomeMap.ts            climate noise → Biome (with blending at borders)
+    biomes.ts              Biome definitions
+    TerrainGenerator.ts    heightmap + fill (stone/surface/water) using biome params
+    StructurePlacer.ts     deterministic structure placement per chunk
+    structures/            Structure interface, Tree, Ruin, …
+    noise.ts, random.ts    simplex, hashing, seeded RNG
+  meshing/
+    ChunkMesher.ts         Chunk + neighbours → MeshData (typed arrays)
+  render/
+    Renderer.ts            scene, fog, resize
+    ChunkRenderer.ts       MeshData → THREE.Mesh, dispose on unload
+    CameraRig.ts           auto-scroll along +X
+
