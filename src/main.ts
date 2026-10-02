@@ -4,7 +4,7 @@ import { registry } from "./blocks/registry";
 
 import { TerrainGenerator } from './generation/terrain-generation';
 
-import { Sky } from './rendering/sky';
+//import { Sky } from './rendering/sky';
 import { loadPack } from './rendering/resource-pack';
 import { TextureAtlas } from './rendering/texture-atlas';
 import { ChunkRenderer } from './rendering/chunk-rendering';
