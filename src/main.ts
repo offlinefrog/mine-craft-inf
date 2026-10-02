@@ -1,10 +1,10 @@
-import { SEED } from './config';
+import { SEED, CAM_GROUND_Z } from './config';
 
 import { registry } from "./blocks/registry";
 
 import { TerrainGenerator } from './generation/terrain-generation';
 
-import { Sky } from './rendering/sky';
+//import { Sky } from './rendering/sky';
 import { loadPack } from './rendering/resource-pack';
 import { TextureAtlas } from './rendering/texture-atlas';
 import { ChunkRenderer } from './rendering/chunk-rendering';
@@ -19,7 +19,7 @@ const atlas = new TextureAtlas(registry);
 const chunkRenderer = new ChunkRenderer(atlas);
 renderer.scene.add(chunkRenderer.group);
 const streamer = new ChunkStreamer(chunkRenderer);
-const rig = new CameraRig(renderer.camera);
+const rig = new CameraRig(renderer.camera, (x) => terrainGenerator.column(x, CAM_GROUND_Z).height);
 //const sky = new Sky(renderer.scene);
 
 const hud = document.getElementById('hud')!;

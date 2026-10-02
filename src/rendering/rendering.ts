@@ -1,13 +1,13 @@
 import * as THREE from 'three';
 
-import { FAR, FOG_FAR, FOG_NEAR } from '../config';
+import { CAM_FOV, FAR, FOG_FAR, FOG_NEAR } from '../config';
 
 const SKY = 0x9fc8e8;
 
 export class Renderer {
     readonly gl = new THREE.WebGLRenderer({ antialias: true });
     readonly scene = new THREE.Scene();
-    readonly camera = new THREE.PerspectiveCamera(65, innerWidth / innerHeight, 0.1, FAR);
+    readonly camera = new THREE.PerspectiveCamera(CAM_FOV, innerWidth / innerHeight, 0.1, FAR);
 
     constructor() {
         this.gl.setPixelRatio(Math.min(devicePixelRatio, 2));

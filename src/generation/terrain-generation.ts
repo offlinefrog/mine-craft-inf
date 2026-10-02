@@ -1,4 +1,4 @@
-import { CAM_Y, CAM_Z, CEIL_SLOPE, CLEARANCE, CHUNK_SIZE, DEPTH, H_SCALE, lvl, SEA_LEVEL, TOP, V_SCALE } from '../config';
+import { CHUNK_SIZE, DEPTH, H_SCALE, lvl, SEA_LEVEL, TOP, V_SCALE } from '../config';
 import { splitmix32, Simplex } from '../noise';
 
 import { BLOCK } from "../blocks/block";
@@ -12,6 +12,11 @@ import { ClimateMap } from './climate';
 const smin = (a: number, b: number, k: number) => {
     const h = Math.max(k - Math.abs(a - b), 0) / k;
     return Math.min(a, b) - h * h * k * 0.25;
+}
+
+const smoothstep = (a: number, b: number, x: number) => {
+    const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
+    return t * t * (3 - 2 * t);
 }
 
 // continentalness -> base height (from deep ocean to inland)
@@ -65,9 +70,11 @@ export class TerrainGenerator {
         const c = this.climate.sample(x, z);
         const relief = ((1 - (c.erosion + 1) / 2)) ** 2;    // 1 = rugged, 0 = flat
         const ridge = 1 - Math.abs(c.pv);
+        const mountains = smoothstep(-0.15, 0.55, c.continent) * relief * ridge * ridge;
         let raw = spline(c.continent)
-            + relief * Math.max(0, c.continent + 0.1) * ridge * ridge * 1.1 * R // mountains: rugged, inland, ridge lines
-            + this.noise.fbm((x * 0.012) / H_SCALE, (z * 0.012) / H_SCALE, 4) * (2 + 9 * relief) * V_SCALE;
+            + mountains * 0.78 * R
+            + this.noise.fbm((x * 0.012) / H_SCALE, (z * 0.012) / H_SCALE, 4) * (2 + 6 * relief) * V_SCALE
+            + this.noise.fbm((x * 0.035) / H_SCALE, (z * 0.035) / H_SCALE, 3) * (0.6 + 1.4 * relief) * V_SCALE;
 
         const bed = SEA_LEVEL - 3;
         if (c.continent > -0.1 && raw > bed) {
@@ -82,8 +89,7 @@ export class TerrainGenerator {
         }
 
         // camera visibility clearance "ramp"
-        const ceiling = CAM_Y - CLEARANCE + CEIL_SLOPE * Math.max(0, CAM_Z - z);
-        const height = Math.max(2, Math.min(TOP, Math.floor(smin(smin(raw, ceiling, 8), TOP, 12))));
+        const height = Math.max(2, Math.min(TOP, Math.floor(smin(raw, TOP, 12))));
 
         return { height, climate: c, biome: pickBiome(c) };
     }
