@@ -63,4 +63,3 @@ src/
     Renderer.ts            scene, fog, resize
     ChunkRenderer.ts       MeshData → THREE.Mesh, dispose on unload
     CameraRig.ts           auto-scroll along +X
-
