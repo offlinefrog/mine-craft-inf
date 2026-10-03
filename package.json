@@ -9,12 +9,15 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@types/node": "^26.6.4",
     "@types/three": "^0.186.0",
     "typescript": "~6.0.2",
     "vite": "^8.3.0"
   },
   "dependencies": {
     "fflate": "^0.8.3",
-    "three": "^0.186.1"
+    "fs": "^0.0.1-security",
+    "three": "^0.186.1",
+    "vitest": "^5.0.3"
   }
 }

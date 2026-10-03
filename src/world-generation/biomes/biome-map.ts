@@ -1,45 +1,74 @@
-import type { Biome, BiomeID, BiomeRegion } from "../../world/biomes/biome";
+import { BIOME_DIMENSIONS, DIMENSION_SIZE, type Biome, type BiomeID, type BiomeRegion } from "../../world/biomes/biome";
+import { BIOMES } from "../../world/biomes/biomes";
 import type { ClimateSample } from "./climate-sample";
 
 // product of biome dimension sizes
-const MAP_SIZE = 12250;
+const MAP_SIZE = BIOME_DIMENSIONS.reduce(
+    (n, d) => n * DIMENSION_SIZE[d],
+    1
+);
 
 export class BiomeMap {
     readonly map: Uint8Array = new Uint8Array(MAP_SIZE);
+    private readonly painted = new Uint8Array(MAP_SIZE);
 
-    constructor(biomes: Biome[]) {
+    conflicts = 0;
+
+    constructor(biomes: readonly Biome[] = BIOMES) {
         for (const biome of biomes) for (const region of biome.regions)
             this.fill(region, biome.id);
     }
 
+    get unpainted(): number {
+        let n = 0;
+        for (const p of this.painted) {
+            if (p === 0) n++;
+        }
+        return n;
+    }
+
     at(c: ClimateSample) {
-        const lc = this.level(c);
-        return this.map[this.index(lc.temperature, lc.humidity, lc.continentalness, lc.erosion, lc.weirdness, lc.PV)];
-    } 
+        return this.map[this.index(
+            this.levelTemperature(c.temperature),
+            this.levelHumidty(c.humidity),
+            this.levelContinentalness(c.continentalness),
+            this.levelErosion(c.erosion),
+            this.levelWeirdness(c.weirdness),
+            this.levelPV(c.PV)
+        )];
+    }
 
     private fill(region: BiomeRegion, biome: BiomeID) {
+        for (const d of BIOME_DIMENSIONS) {
+            const [lo, hi] = region[d];
+
+            if (!(lo >= 0 && lo <= hi && hi < DIMENSION_SIZE[d])) {
+                throw new RangeError(
+                    `Biome ${biome}: ${d} range [${lo}, ${hi}] ` +
+                    `is outside 0..${DIMENSION_SIZE[d] - 1}`
+                );
+            }
+        }
+
         for (let t = region.temperature[0];     t <= region.temperature[1];     t++)
         for (let h = region.humidity[0];        h <= region.humidity[1];        h++)
         for (let c = region.continentalness[0]; c <= region.continentalness[1]; c++)
         for (let e = region.erosion[0];         e <= region.erosion[1];         e++)
         for (let w = region.weirdness[0];       w <= region.weirdness[1];       w++)
-        for (let pv = region.PV[0];             pv <= region.PV[1];             pv++)
-            this.map[this.index(t, h, c, e, w, pv)] = biome;
+        for (let pv = region.PV[0];             pv <= region.PV[1];             pv++) {
+            const i = this.index(t, h, c, e, w, pv);
+
+            if (this.painted[i] && this.map[i] !== biome) this.conflicts++;
+
+            this.map[i] = biome;
+            this.painted[i] = 1;
+        }
     }
 
     private index(t: number, h: number, c: number, e: number, w: number, pv: number) {
-        return ((((t * 5 + h) * 7 + c) * 7 + e) * 2 + w) * 5 + pv;
-    }
-
-    private level(c: ClimateSample): ClimateSample {
-        return {
-            temperature: this.levelTemperature(c.temperature),
-            humidity: this.levelHumidty(c.humidity),
-            continentalness: this.levelContinentalness(c.continentalness),
-            erosion: this.levelErosion(c.erosion),
-            weirdness: this.levelWeirdness(c.weirdness),
-            PV: this.levelPV(c.PV)
-        }
+        const S = DIMENSION_SIZE;
+        
+        return ((((t * S.humidity + h) * S.continentalness + c) * S.erosion + e) * S.weirdness + w) * S.PV + pv;
     }
 
     private levelTemperature(T: number): number {
