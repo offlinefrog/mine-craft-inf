@@ -22,6 +22,7 @@ export interface TerrainConfig {
     erosionOffset: SplinePoint[];   // erosion: blocks added to ground height (zero/negative)
     inland: SplinePoint[];          // continentalness: 0 at sea/coast, 1 far inland, scales erosionOffset
     hillHeight: SplinePoint[];      // continentalness: range for hills to rise (lowest erosion, highest PV)
+    erosionMass: SplinePoint[];   // erosion: portion of hillHeight forming broad mass of hills and mountains
     erosionScale: SplinePoint[];    // erosion: fraction of hillHeight used (low = rugged, high = flat)
     ridgeShape: SplinePoint[];      // PV: hill shape in [-1, 1] (negative lowers ground, +1 = peak)
 
@@ -38,23 +39,24 @@ export interface TerrainConfig {
 
 export const DEFAULT_TERRAIN_CONFIG: TerrainConfig = {
     seaLevel: SEA_LEVEL,
-    noise: { wavelengthXZ: 48, wavelengthY: 32, octaves: 3, amplitude: 0.3 },
+    noise: { wavelengthXZ: 64, wavelengthY: 40, octaves: 3, amplitude: 0.2 },
 
     continental: [[-1, 26], [-0.455, 38], [-0.19, 54], [-0.11, 61], [0.03, 69], [0.3, 74], [1, 78]],
     erosionOffset: [[-1, 0], [-0.375, -1], [0.05, -4], [0.45, -8], [1, -10]],
     inland: [[-0.19, 0], [0.03, 1]],
+    erosionMass: [[-1, 0.9], [-0.78, 0.83], [-0.375, 0.5], [-0.2225, 0.32], [0.05, 0.1], [0.45, 0.025], [1, 0]],
     hillHeight: [[-0.11, 0], [0.03, 24], [0.3, 80], [1, 130]],
-    erosionScale: [[-1, 1], [-0.78, 0.9], [-0.375, 0.62], [-0.2225, 0.42], [0.05, 0.2], [0.45, 0.08], [1, 0.03]],
-    ridgeShape: [[-1, -0.4], [-0.85, -0.3], [-0.2, -0.05], [0.2, 0.12], [0.7, 0.55], [1, 1]],
-
+    erosionScale: [[-1, 0.1], [-0.78, 0.09], [-0.375, 0.065], [-0.2225, 0.05], [0.05, 0.025], [0.45, 0.01], [1, 0.004]],
+    ridgeShape: [[-1.01, -0.45], [-1, -0.45], [-0.85, -0.35], [-0.2, -0.05], [0.2, 0.2], [0.7, 0.72], [0.92, 0.96], [1, 1], [1.01, 1]],
+    
     pvRiver: [[-0.6, 0], [-0.85, 0.45], [-0.94, 1], [-1, 1]],
     continentalRiver: [[-0.19, 0], [-0.11, 1]],
     erosionRiver: [[-0.375, 0], [0.05, 1]],
     riverBedBelowSea: 3,
     riverMaxDepth: 24,
 
-    erosionBias: [[-1, 0.05], [-0.375, 0.065], [0.05, 0.09], [0.45, 0.12], [1, 0.14]],
-    pvBias: [[-1, 1.15], [0, 1], [1, 0.75]],
+    erosionBias: [[-1, 0.075], [-0.375, 0.085], [0.05, 0.1], [0.45, 0.12], [1, 0.14]],
+    pvBias: [[-1, 1.15], [0, 1], [1, 0.9]],
 }
 
 export interface TerrainShape { baseHeight: number; bias: number; noiseScale: number; }
@@ -64,6 +66,7 @@ export class TerrainSampler {
     private readonly continental: Spline;
     private readonly erosionOffset: Spline;
     private readonly inland: Spline;
+    private readonly erosionMass: Spline;
     private readonly hillHeight: Spline;
     private readonly erosionScale: Spline;
     private readonly ridgeShape: Spline;
@@ -84,6 +87,7 @@ export class TerrainSampler {
         this.continental = new Spline(config.continental);
         this.erosionOffset = new Spline(config.erosionOffset);
         this.inland = new Spline(config.inland);
+        this.erosionMass = new Spline(config.erosionMass);
         this.hillHeight = new Spline(config.hillHeight);
         this.erosionScale = new Spline(config.erosionScale);
         this.ridgeShape = new Spline(config.ridgeShape);
@@ -104,8 +108,9 @@ export class TerrainSampler {
     // ground height and squeeze for a column, based on climate
     shape(c: ClimateSample, out: TerrainShape = newTerrainShape()): TerrainShape {
         const C = c.continentalness, E = c.erosion, PV = c.PV;
-        let height = this.continental.eval(C) + this.erosionOffset.eval(E) * this.inland.eval(C)
-                   + this.erosionScale.eval(E) * this.hillHeight.eval(C) * this.ridgeShape.eval(PV);
+
+        const hills = this.hillHeight.eval(C) * this.erosionMass.eval(E) + this.erosionScale.eval(E) * this.ridgeShape.eval(PV);
+        let height = this.continental.eval(C) + this.erosionOffset.eval(E) * this.inland.eval(C) + hills;
 
         const river = this.pvRiver.eval(PV) * this.continentalRiver.eval(C) * this.erosionRiver.eval(E);
         height -= river * Math.max(0, Math.min(this.config.riverMaxDepth, height - this.riverBed));
