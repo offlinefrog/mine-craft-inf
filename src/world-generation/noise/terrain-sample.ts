@@ -22,7 +22,7 @@ export interface TerrainConfig {
     erosionOffset: SplinePoint[];   // erosion: blocks added to ground height (zero/negative)
     inland: SplinePoint[];          // continentalness: 0 at sea/coast, 1 far inland, scales erosionOffset
     hillHeight: SplinePoint[];      // continentalness: range for hills to rise (lowest erosion, highest PV)
-    erosionMass: SplinePoint[];   // erosion: portion of hillHeight forming broad mass of hills and mountains
+    erosionMass: SplinePoint[];     // erosion: portion of hillHeight forming broad mass of hills and mountains
     erosionScale: SplinePoint[];    // erosion: fraction of hillHeight used (low = rugged, high = flat)
     ridgeShape: SplinePoint[];      // PV: hill shape in [-1, 1] (negative lowers ground, +1 = peak)
 
