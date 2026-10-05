@@ -1,8 +1,8 @@
-import { WORLD_HEIGHT } from "../../config";
+import { CHUNK_SIZE, WORLD_HEIGHT } from "../../config";
 import { BLOCK } from "../../world/blocks/blocks";
-import { blockIndex, Chunk, CHUNK_SIZE, ChunkStatus } from "../../world/chunk";
+import { Chunk, ChunkStatus } from "../../world/chunk";
 import { newClimateSample } from "../climate-sample";
-import { newTerrainShape } from "../noise/terrain-sample";
+import { newTerrainShape } from "../terrain-sample";
 import type { Context } from "./context";
 
 // density is computed on a coarse grid of corners and interpolated between them for performance
@@ -58,7 +58,7 @@ export const noiseStage = {
 
                         const bottom = (d000 * (1 - tx) + d100 * tx) * (1 - tz) + (d001 * (1 - tx) + d101 * tx) * tz;
                         const top = (d010 * (1 - tx) + d110 * tx) * (1 - tz) + (d011 * (1 - tx) + d111 * tx) * tz;
-                        const col = blockIndex(cx * CELL + lx, cy * CELL, cz * CELL + lz);
+                        const col = Chunk.index(cx * CELL + lx, cy * CELL, cz * CELL + lz);
                         for (let ly = 0; ly < CELL; ly++) {
                             const y = cy * CELL + ly;
                             const d = bottom + (top - bottom) * (ly / CELL);

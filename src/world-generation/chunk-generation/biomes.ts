@@ -1,4 +1,5 @@
-import { Chunk, CHUNK_SIZE, ChunkStatus, columnIndex } from "../../world/chunk";
+import { CHUNK_SIZE } from "../../config";
+import { Chunk, ChunkStatus } from "../../world/chunk";
 import type { Context } from "./context";
 
 /**
@@ -14,7 +15,7 @@ export const biomesStage = {
         for (let sz = 0; sz < CHUNK_SIZE; sz++) for (let sx = 0; sx < CHUNK_SIZE; sx++) {
             const wx = x0 + sx, wz = z0 + sz;
 
-            chunk.biomes[columnIndex(sx, sz)] = ctx.biomes.at(ctx.climate.sample(wx, wz));
+            chunk.biomes[Chunk.column(sx, sz)] = ctx.biomes.at(ctx.climate.sample(wx, wz));
         }
 
         chunk.status = ChunkStatus.Biomes;

@@ -1,9 +1,9 @@
 import type { Biome } from "../../world/biomes/biome";
-import { DEFAULT_BIOMES } from "../../world/biomes/biomes";
-import { BiomeMap } from "../biomes/biome-map";
+import { BIOMES } from "../../world/biomes/biomes";
+import { BiomeMap } from "../biome-map";
 import { ClimateSampler, DEFAULT_CLIMATE_CONFIG, type ClimateConfig } from "../climate-sample";
-import { Clearance, DEFAULT_CLEARANCE_CONFIG, type ClearanceConfig } from "../noise/clearance";
-import { DEFAULT_TERRAIN_CONFIG, TerrainSampler, type TerrainConfig } from "../noise/terrain-sample";
+import { Clearance, DEFAULT_CLEARANCE_CONFIG, type ClearanceConfig } from "../clearance";
+import { DEFAULT_TERRAIN_CONFIG, TerrainSampler, type TerrainConfig } from "../terrain-sample";
 
 export class Context {
     readonly climate: ClimateSampler;
@@ -17,7 +17,7 @@ export class Context {
     constructor(
         seed: number,
         climateConfig: ClimateConfig = DEFAULT_CLIMATE_CONFIG,
-        biomes: readonly Biome[] = DEFAULT_BIOMES,
+        biomes: readonly Biome[] = BIOMES,
         terrainConfig: TerrainConfig = DEFAULT_TERRAIN_CONFIG,
         clearanceConfig: ClearanceConfig | null = DEFAULT_CLEARANCE_CONFIG,
     ) {

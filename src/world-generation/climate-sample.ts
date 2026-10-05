@@ -1,5 +1,5 @@
 import { CLIMATE_DIMENSIONS, type ClimateDimension } from "../world/climate";
-import { OctaveNoise, type OctaveConfig } from "./noise";
+import { OctaveNoise, type OctaveConfig } from "../core/noise";
 
 interface DimensionConfig extends OctaveConfig {
     // sd of final value before bind to [-1, 1]

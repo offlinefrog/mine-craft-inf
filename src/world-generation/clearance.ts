@@ -1,5 +1,5 @@
-import { SEA_LEVEL } from "../../config";
-import { Spline, type SplinePoint } from "./spline";
+import { CAMERA_Y } from "../config";
+import { Spline, type SplinePoint } from "../core/spline";
 import type { TerrainShape } from "./terrain-sample";
 
 export class StraightRoute {
@@ -28,7 +28,7 @@ export interface ClearanceConfig {
 }
 
 export const DEFAULT_CLEARANCE_CONFIG: ClearanceConfig = {
-  cameraY: SEA_LEVEL + 14,
+  cameraY: CAMERA_Y,
   routeZ: 0,
 
   ceiling: [[0, -3], [24, -3], [60, 2], [100, 10], [150, 55], [220, 120], [400, 300], [800, 700]],

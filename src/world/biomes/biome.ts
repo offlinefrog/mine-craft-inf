@@ -1,64 +1,70 @@
 import { CLIMATE_DIMENSIONS } from "../climate";
 
-export const BIOME = {
-    OCEAN: 0,
-    DEEP_OCEAN: 1,
-    WARM_OCEAN: 2,
-    LUKEWARM_OCEAN: 3,
-    DEEP_LUKEWARM_OCEAN: 4,
-    COLD_OCEAN: 5,
-    DEEP_COLD_OCEAN: 6,
-    FROZEN_OCEAN: 7,
-    DEEP_FROZEN_OCEAN: 8,
-    MUSHROOM_FIELDS: 9,
+const BIOME_NAMES = [
+    'ocean',
+    'deep_ocean',
+    'warm_ocean',
+    'lukewarm_ocean',
+    'deep_lukewarm_ocean',
+    'cold_ocean',
+    'deep_cold_ocean',
+    'frozen_ocean',
+    'deep_frozen_ocean',
+    'mushroom_fields',
 
-    JAGGED_PEAKS: 10,
-    FROZEN_PEAKS: 11,
-    STONY_PEAKS: 12,
-    MEADOW: 13,
-    CHERRY_GROVE: 14,
-    GROVE: 15,
-    SNOWY_SLOPES: 16,
-    WINDSWEPT_HILLS: 17,
-    WINDSWEPT_GRAVELLY_HILLS: 18,
-    WINDSWEPT_FOREST: 19,
+    'jagged_peaks',
+    'frozen_peaks',
+    'stony_peaks',
+    'meadow',
+    'cherry_grove',
+    'grove',
+    'snowy_slopes',
+    'windswept_hills',
+    'windswept_gravelly_hills',
+    'windswept_forest',
+    
+    'forest',
+    'flower_forest',
+    'taiga',
+    'old_growth_pine_taiga',
+    'old_growth_spruce_taiga',
+    'snowy_taiga',
+    'birch_forest',
+    'old_growth_birch_forest',
+    'dark_forest',
+    'pale_garden',
+    'jungle',
+    'sparse_jungle',
+    'bamboo_jungle',
+    'dappled_forest',
 
-    FOREST: 20,
-    FLOWER_FOREST: 21,
-    TAIGA: 22,
-    OLD_GROWTH_PINE_TAIGA: 23,
-    OLD_GROWTH_SPRUCE_TAIGA: 24,
-    SNOWY_TAIGA: 25,
-    BIRCH_FOREST: 26,
-    OLD_GROWTH_BIRCH_FOREST: 27,
-    DARK_FOREST: 28,
-    PALE_GARDEN: 29,
-    JUNGLE: 30,
-    SPARSE_JUNGLE: 31,
-    BAMBOO_JUNGLE: 32,
-    DAPPLED_FOREST: 33,
+    'river',
+    'frozen_river',
+    'swamp',
+    'mangrove_swamp',
+    'beach',
+    'snowy_beach',
+    'stony_shore',
+    
+    'plains',
+    'sunflower_plains',
+    'snowy_plains',
+    'ice_spikes',
 
-    RIVER: 34,
-    FROZEN_RIVER: 35,
-    SWAMP: 36,
-    MANGROVE_SWAMP: 37,
-    BEACH: 38,
-    SNOWY_BEACH: 39,
-    STONY_SHORE: 40,
+    'desert',
+    'savanna',
+    'savanna_plateau',
+    'windswept_savanna',
+    'badlands',
+    'wooded_badlands',
+    'eroded_badlands'
+] as const;
 
-    PLAINS: 41,
-    SUNFLOWER_PLAINS: 42,
-    SNOWY_PLAINS: 43,
-    ICE_SPIKES: 44,
+export type BiomeName = (typeof BIOME_NAMES)[number];
 
-    DESERT: 45,
-    SAVANNA: 46,
-    SAVANNA_PLATEAU: 47,
-    WINDSWEPT_SAVANNA: 48,
-    BADLANDS: 49,
-    WOODED_BADLANDS: 50,
-    ERODED_BADLANDS: 51
-} as const;
+export const BIOME = Object.fromEntries(
+    BIOME_NAMES.map((n, i) => [n.toUpperCase(), i])
+) as { readonly [K in BiomeName as Uppercase<K>]: number };
 
 export type BiomeID = typeof BIOME[keyof typeof BIOME];
 
@@ -78,7 +84,15 @@ export function biomeRegion(constraints: Partial<BiomeRegion> = {}): BiomeRegion
     return br;
 }
 
-export interface Biome {
-    id: BiomeID;
+export interface BiomeDef {
     regions: readonly BiomeRegion[];
+}
+
+export class Biome {
+    id: BiomeID;
+    def: BiomeDef;
+
+    constructor(id: BiomeID, def: BiomeDef) {
+        this.id = id; this.def = def;
+    }
 }

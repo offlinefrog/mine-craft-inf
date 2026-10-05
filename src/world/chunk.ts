@@ -1,6 +1,5 @@
-import { WORLD_HEIGHT } from "../config";
-
-export const CHUNK_SIZE = 16;
+import { CHUNK_SIZE, WORLD_HEIGHT } from "../config";
+import { BLOCK, type BlockID } from "./blocks/blocks";
 
 // stages of a chunk
 export const ChunkStatus = {
@@ -20,10 +19,22 @@ export class Chunk {
     constructor(cx: number, cz: number) {
         this.cx = cx; this.cz = cz;
     }
+
+    get key(): string {
+        return `${this.cx},${this.cz}`;
+    }
+
+    blockAt(x: number, y: number, z: number): BlockID {
+        if (y < 0) return BLOCK.STONE;
+        if (y >= WORLD_HEIGHT) return BLOCK.AIR;
+        return this.blocks[Chunk.index(x, y, z)];
+    }
+
+    static column(sx: number, sz: number): number {
+        return sz * CHUNK_SIZE + sx;
+    }
+
+    static index(sx: number, y: number, sz: number): number {
+        return Chunk.column(sx, sz) * WORLD_HEIGHT + y;
+    }
 }
-
-export const columnIndex = (sx: number, sz: number): number =>
-    sz * CHUNK_SIZE + sx;
-
-export const blockIndex = (sx: number, y: number, sz: number): number =>
-    columnIndex(sx, sz) * WORLD_HEIGHT + y;

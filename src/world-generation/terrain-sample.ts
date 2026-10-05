@@ -1,7 +1,7 @@
-import { SEA_LEVEL } from "../../config";
-import type { ClimateSample } from "../climate-sample";
-import { OctaveNoise3, type Octave3Config } from "../noise";
-import { Spline, type SplinePoint } from "./spline";
+import { SEA_LEVEL } from "../config";
+import type { ClimateSample } from "./climate-sample";
+import { OctaveNoise3, type Octave3Config } from "../core/noise";
+import { Spline, type SplinePoint } from "../core/spline";
 
 /**
  *  terrain shape with minecraft's density:

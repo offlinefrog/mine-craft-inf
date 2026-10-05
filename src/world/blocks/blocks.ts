@@ -1,4 +1,4 @@
-export const NAMES = [
+const BLOCK_NAMES = [
     'air',
     'bedrock',
     'brown_terracotta',
@@ -29,10 +29,25 @@ export const NAMES = [
     'yellow_terracotta',
 ] as const;
 
-export type BlockName = (typeof NAMES)[number];
+export type BlockName = (typeof BLOCK_NAMES)[number];
 
 export const BLOCK = Object.fromEntries(
-    NAMES.map((n, i) => [n.toUpperCase(), i])
+    BLOCK_NAMES.map((n, i) => [n.toUpperCase(), i])
 ) as { readonly [K in BlockName as Uppercase<K>]: number };
 
-export type BLOCK = (typeof BLOCK)[keyof typeof BLOCK];
+export type BlockID = (typeof BLOCK)[keyof typeof BLOCK];
+
+// rendering
+export type RGB = [number, number, number];
+
+export interface BlockDef {
+    occludes: boolean;
+    texture?: { top: string; bottom?: string; side?: string };
+    fallback: RGB;      // fallback color when texture unavailable
+}
+
+export const BLOCKS: Record<BlockID, BlockDef> = {
+    [BLOCK.AIR]:        { occludes: false,  fallback: [0, 0, 0] },
+    [BLOCK.STONE]:      { occludes: true,   fallback: [0.48, 0.48, 0.5] },
+    [BLOCK.WATER]:      { occludes: true,   fallback: [0.18, 0.38, 0.8] },
+}

@@ -1,5 +1,5 @@
-import { BIOME_DIMENSIONS, DIMENSION_SIZE, type Biome, type BiomeID, type BiomeRegion } from "../../world/biomes/biome";
-import type { ClimateSample } from "../climate-sample";
+import { Biome, BIOME_DIMENSIONS, DIMENSION_SIZE, type BiomeID, type BiomeRegion } from "../world/biomes/biome";
+import type { ClimateSample } from "./climate-sample";
 
 // product of biome dimension sizes
 const MAP_SIZE = BIOME_DIMENSIONS.reduce(
@@ -14,7 +14,7 @@ export class BiomeMap {
     conflicts = 0;
 
     constructor(biomes: readonly Biome[]) {
-        for (const biome of biomes) for (const region of biome.regions)
+        for (const biome of biomes) for (const region of biome.def.regions)
             this.fill(region, biome.id);
     }
 
