@@ -1,9 +1,9 @@
 import { BIOME, biomeRegion, type Biome } from "./biome"
 
-export const BIOMES: Biome[] = [];
+export const DEFAULT_BIOMES: Biome[] = [];
 
 function biome(data: Biome): Biome {
-    BIOMES.push(data);
+    DEFAULT_BIOMES.push(data);
     return data;
 }
 

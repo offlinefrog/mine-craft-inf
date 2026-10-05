@@ -1,5 +1,5 @@
-import { CLIMATE_DIMENSIONS, type ClimateDimension } from "../../world/climate";
-import { OctaveNoise, type OctaveConfig } from "../noise";
+import { CLIMATE_DIMENSIONS, type ClimateDimension } from "../world/climate";
+import { OctaveNoise, type OctaveConfig } from "./noise";
 
 interface DimensionConfig extends OctaveConfig {
     // sd of final value before bind to [-1, 1]
@@ -11,13 +11,13 @@ interface WarpConfig extends OctaveConfig {
     strength: number;
 }
 
-interface ClimateConfig {
+export interface ClimateConfig {
     dimensions: Record<ClimateDimension, DimensionConfig>;
     warp: WarpConfig;
 }
 
 // default octave patterns
-const DEFAULT_CLIMATE_CONFIG: ClimateConfig = {
+export const DEFAULT_CLIMATE_CONFIG: ClimateConfig = {
     dimensions: {
         temperature:     { wavelength: 1024, amplitudes: [1.5, 0, 1, 0, 0, 0],        spread: 0.54 },
         humidity:        { wavelength: 256,  amplitudes: [1, 1, 0, 0, 0, 0],          spread: 0.48 },
@@ -32,7 +32,7 @@ const DEFAULT_CLIMATE_CONFIG: ClimateConfig = {
 const pv = (w: number): number => 1 - Math.abs((3 * Math.abs(w)) - 2);
 
 export type ClimateSample = Record<ClimateDimension, number> & { PV: number };
-const newClimateSample = (): ClimateSample => ({
+export const newClimateSample = (): ClimateSample => ({
     temperature: 0, humidity: 0, continentalness: 0, erosion: 0, weirdness: 0, PV: 0
 });
 
@@ -43,7 +43,7 @@ export class ClimateSampler {
     private readonly warpX: OctaveNoise;
     private readonly warpZ: OctaveNoise;
 
-    readonly config: ClimateConfig;
+    private readonly config: ClimateConfig;
 
     constructor(seed: number, config: ClimateConfig = DEFAULT_CLIMATE_CONFIG) {
         // incrementally-salted noises
@@ -55,8 +55,7 @@ export class ClimateSampler {
     }
 
     // sampled at world coords (wx, wz)
-    sample(wx: number, wz: number): ClimateSample {
-        const out = newClimateSample();
+    sample(wx: number, wz: number, out: ClimateSample = newClimateSample()): ClimateSample {
         const { dimensions, warp } = this.config;
         let x = wx, z = wz;
 
