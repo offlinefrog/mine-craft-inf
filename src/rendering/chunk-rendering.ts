@@ -8,6 +8,11 @@ export class ChunkRenderer {
     private meshes = new Map<string, THREE.Mesh>();
     private material = new THREE.MeshBasicMaterial({ vertexColors: true });
 
+    // dev purposes
+    getMesh(key: string): THREE.Object3D | undefined {
+        return this.meshes.get(key);
+    }
+
     add(key: string, cx: number, cz: number, data: ChunkMesh): void {
         if (this.meshes.has(key)) return;
 
@@ -44,5 +49,4 @@ export class ChunkRenderer {
 
         return geo;
     }
-
 }

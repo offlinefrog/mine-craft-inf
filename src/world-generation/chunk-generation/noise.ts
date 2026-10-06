@@ -33,7 +33,7 @@ export const noiseStage = {
         for (let gz = 0; gz < NX; gz++) for (let gx = 0; gx < NX; gx++) {
             const wx = chunk.cx * CHUNK_SIZE + gx * CELL, wz = chunk.cz * CHUNK_SIZE + gz * CELL;
             terrain.shape(climate.sample(wx, wz, sample), shape);
-            //?.apply(wx, wz, shape);    // keeps terrain near camera low
+            clearance?.apply(wx, wz, shape);    // keeps terrain near camera low
 
             const base = (gz * NX + gx) * NY;
             for (let gy = 0; gy < NY; gy++) corners[base + gy] = terrain.density(wx, gy * CELL, wz, shape);

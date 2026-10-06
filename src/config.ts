@@ -11,7 +11,7 @@ export const FOG_NEAR = Math.round(FOG_FAR * 0.32);
 export const WORLD_DEPTH = Math.round(FOG_FAR * 2.2);
 
 export const CAMERA_START = CHUNK_SIZE / 2;
-export const CAMERA_Y = 120; //SEA_LEVEL + 14;
+export const CAMERA_Y = SEA_LEVEL + 30;
 export const CAMERA_Z = 6;
 
 export const CAMERA_FOV = 60;
