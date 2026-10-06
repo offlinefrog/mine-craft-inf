@@ -1,6 +1,6 @@
 import { SEA_LEVEL } from "../config";
 import type { ClimateSample } from "./climate-sample";
-import { OctaveNoise3, type Octave3Config } from "../core/noise";
+import { OctaveNoise3, type Octave3Config } from "../core/perlin3";
 import { Spline, type SplinePoint } from "../core/spline";
 
 /**
@@ -44,8 +44,8 @@ export const DEFAULT_TERRAIN_CONFIG: TerrainConfig = {
     continental: [[-1, 26], [-0.455, 38], [-0.19, 54], [-0.11, 61], [0.03, 69], [0.3, 74], [1, 78]],
     erosionOffset: [[-1, 0], [-0.375, -1], [0.05, -4], [0.45, -8], [1, -10]],
     inland: [[-0.19, 0], [0.03, 1]],
-    erosionMass: [[-1, 0.9], [-0.78, 0.83], [-0.375, 0.5], [-0.2225, 0.32], [0.05, 0.1], [0.45, 0.025], [1, 0]],
     hillHeight: [[-0.11, 0], [0.03, 24], [0.3, 80], [1, 130]],
+    erosionMass: [[-1, 0.9], [-0.78, 0.83], [-0.375, 0.5], [-0.2225, 0.32], [0.05, 0.1], [0.45, 0.025], [1, 0]],
     erosionScale: [[-1, 0.1], [-0.78, 0.09], [-0.375, 0.065], [-0.2225, 0.05], [0.05, 0.025], [0.45, 0.01], [1, 0.004]],
     ridgeShape: [[-1.01, -0.45], [-1, -0.45], [-0.85, -0.35], [-0.2, -0.05], [0.2, 0.2], [0.7, 0.72], [0.92, 0.96], [1, 1], [1.01, 1]],
     

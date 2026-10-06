@@ -1,5 +1,5 @@
 //const q = new URLSearchParams(location.search);
-export const SEED = 2 //Number(q.get('seed') ?? 1337);
+export const SEED = 1337; //Number(q.get('seed') ?? 1337);
 
 export const CHUNK_SIZE = 16;
 export const WORLD_HEIGHT = 256;
@@ -11,7 +11,7 @@ export const FOG_NEAR = Math.round(FOG_FAR * 0.32);
 export const WORLD_DEPTH = Math.round(FOG_FAR * 2.2);
 
 export const CAMERA_START = CHUNK_SIZE / 2;
-export const CAMERA_Y = SEA_LEVEL + 14;
+export const CAMERA_Y = 120; //SEA_LEVEL + 14;
 export const CAMERA_Z = 6;
 
 export const CAMERA_FOV = 60;

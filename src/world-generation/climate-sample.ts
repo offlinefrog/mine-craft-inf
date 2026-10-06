@@ -1,5 +1,5 @@
 import { CLIMATE_DIMENSIONS, type ClimateDimension } from "../world/climate";
-import { OctaveNoise, type OctaveConfig } from "../core/noise";
+import { OctaveNoise, type OctaveConfig } from "../core/octave";
 
 interface DimensionConfig extends OctaveConfig {
     // sd of final value before bind to [-1, 1]
@@ -23,8 +23,7 @@ export const DEFAULT_CLIMATE_CONFIG: ClimateConfig = {
     dimensions: {
         temperature:     { wavelength: 1024, amplitudes: [1.5, 0, 1, 0, 0, 0],        spread: 0.54 },
         humidity:        { wavelength: 256,  amplitudes: [1, 1, 0, 0, 0, 0],          spread: 0.48 },
-        // continentalness bias to favor land regions
-        continentalness: { wavelength: 512, amplitudes: [1, 1, 2, 2, 2, 1, 1, 1, 1], spread: 0.43, offset: 0.15 },
+        continentalness: { wavelength: 512, amplitudes: [1, 1, 2, 2, 2, 1, 1, 1, 1],  spread: 0.43 },
         erosion:         { wavelength: 512,  amplitudes: [1, 1, 0, 1, 1],             spread: 0.47 },
         weirdness:       { wavelength: 128,  amplitudes: [1, 2, 1, 0, 0, 0],          spread: 0.45 },
     },
@@ -69,7 +68,7 @@ export class ClimateSampler {
 
         for (const p of CLIMATE_DIMENSIONS) {
             const dimension = dimensions[p];
-            out[p] = bind(this.noise[p].sample(x, z) * dimension.spread + (dimension.offset ?? 0));
+            out[p] = bind(this.noise[p].sample(x, z) * dimension.spread);
         }
         out.PV = pv(out.weirdness);
         return out;

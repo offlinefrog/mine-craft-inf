@@ -38,7 +38,8 @@ function generateVisibleChunks(): Chunk[] {
 
     for (let cz = ccz; cz <= ccz + CHUNK_DEPTH; cz++) {
         for (let cx = ccx - CHUNK_RADIUS; cx <= ccx + CHUNK_RADIUS; cx++) {
-            chunks.push(generateChunk(context, cx, cz));
+            const chunk = generateChunk(context, cx, cz);
+            chunks.push(chunk);
         }
     }
 
@@ -58,7 +59,7 @@ const generationStart = performance.now();
 const chunks = generateVisibleChunks();
 
 const generationTime = performance.now() - generationStart;
-console.log(`${performance.now()}: chunks generated in ${generationTime.toFixed(2)} ms!`);
+console.log(`${performance.now()}: ${chunks.length} chunks generated in ${generationTime.toFixed(2)} ms!`);
 
 console.log(`${performance.now()}: meshing chunks...`);
 const meshingStart = performance.now();
@@ -66,7 +67,7 @@ const meshingStart = performance.now();
 meshVisibleChunks(chunks);
 
 const meshingTime = performance.now() - meshingStart;
-console.log(`${performance.now()}: chunks meshed in ${meshingTime.toFixed(2)} ms!`)
+console.log(`${performance.now()}: ${chunks.length} chunks meshed in ${meshingTime.toFixed(2)} ms!`)
 
 window.addEventListener("resize", () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
