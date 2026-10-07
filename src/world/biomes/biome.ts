@@ -1,6 +1,6 @@
 import { CLIMATE_DIMENSIONS } from "../climate";
 
-const BIOME_NAMES = [
+export const BIOME_NAMES = [
     'ocean',
     'deep_ocean',
     'warm_ocean',
