@@ -26,7 +26,6 @@ dist-ssr
 #self
 src_1
 src_2
-src_old
 test
 biome-regions
 terrain-preview

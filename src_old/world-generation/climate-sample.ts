@@ -21,13 +21,13 @@ export interface ClimateConfig {
 // default octave patterns
 export const DEFAULT_CLIMATE_CONFIG: ClimateConfig = {
     dimensions: {
-        temperature:     { wavelength: 1024, amplitudes: [1.5, 0, 1, 0, 0, 0],        spread: 0.54 },
-        humidity:        { wavelength: 256,  amplitudes: [1, 1, 0, 0, 0, 0],          spread: 0.48 },
-        continentalness: { wavelength: 512, amplitudes: [1, 1, 2, 2, 2, 1, 1, 1, 1],  spread: 0.43 },
-        erosion:         { wavelength: 512,  amplitudes: [1, 1, 0, 1, 1],             spread: 0.47 },
-        weirdness:       { wavelength: 128,  amplitudes: [1, 2, 1, 0, 0, 0],          spread: 0.45 },
+        temperature:     { wavelength: 768,  amplitudes: [1.5, 0, 0.75],    spread: 0.54 },
+        humidity:        { wavelength: 384,  amplitudes: [1, 0.75],         spread: 0.48 },
+        continentalness: { wavelength: 1536, amplitudes: [1, 0.5, 0.25],    spread: 0.60,   offset: 0.50 },
+        erosion:         { wavelength: 384,  amplitudes: [1, 0.75, 0.25],   spread: 0.45 },
+        weirdness:       { wavelength: 384,  amplitudes: [1, 0.75, 0.25],   spread: 0.38 },
     },
-    warp: { wavelength: 256, amplitudes: [1, 1, 1, 1], strength: 16 },
+    warp: { wavelength: 384, amplitudes: [1, 0.5], strength: 12 },
 };
 
 // PV = 1 - |( 3 * | w |) - 2 |
@@ -68,7 +68,7 @@ export class ClimateSampler {
 
         for (const p of CLIMATE_DIMENSIONS) {
             const dimension = dimensions[p];
-            out[p] = bind(this.noise[p].sample(x, z) * dimension.spread);
+            out[p] = bind(this.noise[p].sample(x, z) * dimension.spread + (dimension.offset ?? 0));
         }
         out.PV = pv(out.weirdness);
         return out;
