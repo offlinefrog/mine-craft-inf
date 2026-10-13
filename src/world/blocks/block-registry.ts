@@ -1,7 +1,8 @@
-import { BLOCK_DEFS, BLOCK_NAMES, Shape, Tint, type BlockDef, type BlockName } from "../world/blocks";
+import { BLOCK_NAMES, Shape, Tint, type BlockDef, type BlockName } from "./blocks";
+import { BLOCK_DEFS } from "./data";
 
-export const UV_INSET = 0.01;
-export const TINTED_FALLBACK = 0x909090;
+const UV_INSET = 0.01;
+const TINTED_FALLBACK = 0x909090;
 
 export class BlockRegistry {
     readonly count: number;
@@ -92,7 +93,7 @@ export class BlockRegistry {
     }
 }
 
-const FALLBACK_OWNDER: Partial<Record<string, BlockName>> = {
+const FALLBACK_OWNER: Partial<Record<string, BlockName>> = {
     water_still: "water",
     snow: "snow_block",
 }
@@ -100,7 +101,7 @@ const TEXTURE_SUFFIXES = ["_top", "_bottom", "_side"] as const;
 const names = new Set<string>(BLOCK_NAMES);
 
 function fallback(texture: string, defs: Record<BlockName, BlockDef>): number {
-    let owner = FALLBACK_OWNDER[texture];
+    let owner = FALLBACK_OWNER[texture];
     if (owner !== undefined) return defs[owner as BlockName].fallback;
     if (names.has(texture)) return defs[texture as BlockName].fallback;
 
@@ -111,7 +112,7 @@ function fallback(texture: string, defs: Record<BlockName, BlockDef>): number {
         if (names.has(owner)) return defs[owner as BlockName].fallback;
     }
 
-    throw new Error(`Cannot infer fallback color for texture "${name}". Add an entry to FALLBACK_OWNER`);
+    throw new Error(`Cannot infer fallback color for texture "${texture}". Add an entry to FALLBACK_OWNER`);
 }
 
 export const registry = new BlockRegistry(BLOCK_NAMES, BLOCK_DEFS);

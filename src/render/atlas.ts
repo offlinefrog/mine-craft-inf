@@ -2,8 +2,8 @@
 
 import * as THREE from "three";
 
-import type { BlockRegistry } from "../mesh/block-registry";
-import { hash } from "../generate/core/hash";
+import type { BlockRegistry } from "../world/blocks/block-registry";
+import { hash } from "../noise/hash";
 
 export type PackImage = CanvasImageSource & { width: number; height: number; }
 

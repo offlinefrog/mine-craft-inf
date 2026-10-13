@@ -3,7 +3,7 @@ export const AXES = [
 ] as const;
 export type Axis = (typeof AXES)[number];
 
-export const THRESHOLDS: Readonly<Record<Axis, readonly number[]>> = {
+const THRESHOLDS: Readonly<Record<Axis, readonly number[]>> = {
     temperature:        [-0.45, -0.15, 0.2, 0.55],                  // 5 levels
     humidity:           [-0.35, -0.10, 0.1, 0.30],                  // 5 levels
     continentalness:    [-1.05, -0.455, -0.190, -0.11, 0.03, 0.30], // 7 levels
@@ -15,8 +15,6 @@ export const THRESHOLDS: Readonly<Record<Axis, readonly number[]>> = {
 export const LEVEL_COUNT = Object.fromEntries(
     AXES.map(a => [a, THRESHOLDS[a].length + 1])
 ) as Readonly<Record<Axis, number>>;
-
-export const CELL_COUNT = AXES.reduce((n, a) => n * LEVEL_COUNT[a], 1); // 12,250 cells
 
 export const TEMPERATURE = { Frozen: 0, Cool: 1, Neutral: 2, Warm: 3, Hot: 4 } as const;
 export const HUMIDITY = { Arid: 0, Dry: 1, Neutral: 2, Wet: 3, Humid: 4 } as const;

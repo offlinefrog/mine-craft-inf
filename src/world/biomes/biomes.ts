@@ -58,7 +58,8 @@ export const BIOME_NAMES = [
     'eroded_badlands'
 ] as const;
 export type BiomeName = (typeof BIOME_NAMES)[number];
-export const BIOME_COUNT = BIOME_NAMES.length; // < 256 -> Uint8Array
+
+// export const BIOME_COUNT = BIOME_NAMES.length; // < 256 -> Uint8Array
 
 export const BIOME = Object.fromEntries(
     BIOME_NAMES.map((n, i) => [n.toUpperCase(), i])
@@ -66,16 +67,16 @@ export const BIOME = Object.fromEntries(
 export type BiomeID = typeof BIOME[keyof typeof BIOME];
 export const biomeID = (name: BiomeName): BiomeID => BIOME[name.toUpperCase() as Uppercase<BiomeName>];
 
-export interface BiomeProps {
-    temperature: number;
-    downfall: number;
-}
-
 export interface Biome {
     readonly id: BiomeID;
     readonly name: BiomeName;
     readonly temperature: number;
     readonly downfall: number;
+}
+
+export interface BiomeProps {
+    temperature: number;
+    downfall: number;
 }
 
 const aridProps = (): BiomeProps => ({ temperature: 2.0, downfall: 0.0 });

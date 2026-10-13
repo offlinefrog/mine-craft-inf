@@ -1,8 +1,10 @@
-import { BIOME_NAMES, biomeID, type BiomeName } from "../../world/biome";
-import { AXES, CELL_COUNT, LEVEL_COUNT, WEIRDNESS as W, type Axis } from "../../world/climate";
+import { BIOME_NAMES, biomeID, type BiomeName } from "./biomes";
+import { AXES, LEVEL_COUNT, WEIRDNESS as W, type Axis } from "../climate";
+
+const CELL_COUNT = AXES.reduce((n, a) => n * LEVEL_COUNT[a], 1); // 12,250 cells
 
 type Range = readonly [number, number];
-export type LevelSpec = number | Range | readonly Range[];
+type LevelSpec = number | Range | readonly Range[];
 export type Box = Partial<Record<Axis, LevelSpec>>;
 
 export interface Rule {

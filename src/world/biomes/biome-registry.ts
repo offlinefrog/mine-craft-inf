@@ -1,9 +1,9 @@
-import { BIOME_NAMES, BIOME_PROPS, biomeID, type Biome, type BiomeID, type BiomeName, type BiomeProps } from "../../world/biome";
-import { level, type ClimateSample } from "../../world/climate";
+import { BIOME_NAMES, BIOME_PROPS, biomeID, type Biome, type BiomeID, type BiomeName, type BiomeProps } from "./biomes";
+import { level, type ClimateSample } from "../climate";
 import { RULES } from "./data";
 import { buildGrid, stride, type Rule } from "./rules";
 
-export class BiomeSource {
+class BiomeSource {
     private readonly grid: Uint8Array;
 
     constructor(grid: Uint8Array) {
@@ -43,6 +43,8 @@ export class BiomeRegistry {
     byName(name: BiomeName): Biome { return this.biomes[biomeID(name)]!; }
 
     get all(): readonly Biome[] { return this.biomes; }
+
+    // source lookup
 }
 
 export const registry = new BiomeRegistry(BIOME_PROPS, RULES);

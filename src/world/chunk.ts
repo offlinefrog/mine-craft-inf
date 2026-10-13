@@ -1,6 +1,6 @@
 import { CHUNK_SIZE, WORLD_HEIGHT } from "../config";
-import type { BiomeID } from "./biome";
-import { BLOCK, type BlockID } from "./blocks";
+import type { BiomeID } from "./biomes/biomes";
+import { BLOCK, type BlockID } from "./blocks/blocks";
 
 export const PADDED_SIZE = CHUNK_SIZE + 2;
 

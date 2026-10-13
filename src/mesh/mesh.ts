@@ -1,11 +1,12 @@
 // meshChunk returns MeshData necessary to create Three.js Mesh objects from the given Chunk
 
 import { CHUNK_SIZE, VERTEX_SCALE, WORLD_HEIGHT } from "../config";
-import { Layer, Shape, Tint } from "../world/blocks";
+import { Layer, Shape, Tint } from "../world/blocks/blocks";
 import { Chunk } from "../world/chunk";
-import { colormap as defaultColormap, type Colormap } from "./colormap";
-import { BlockRegistry } from "./block-registry";
-import { registry } from "../generate/biomes/biome-registry";
+
+import type { Colormap } from "../world/blocks/colormap";
+import type { BlockRegistry } from "../world/blocks/block-registry";
+import type { BiomeRegistry } from "../world/biomes/biome-registry";
 
 const Face = { PY: 0, NY: 1, NX: 2, PX: 3, NZ: 4, PZ: 5 };
 type Face = (typeof Face)[keyof typeof Face];
@@ -188,24 +189,26 @@ export class Mesher {
     private readonly grids: (Float32Array | null)[] = new Array(8).fill(null);
     private readonly tmp = [0, 0, 0];
 
-    private readonly registry: BlockRegistry
+    private readonly blocks: BlockRegistry;
+    private readonly biomes: BiomeRegistry;
 
-    constructor(registry: BlockRegistry, colormap?: Colormap) {
-        this.colormap = colormap ?? defaultColormap;
+    constructor(blocks: BlockRegistry, biomes: BiomeRegistry, colormap: Colormap) {
+        this.colormap = colormap;
         
-        const slots = registry.slotNames.length;
+        const slots = blocks.slotNames.length;
         this.rects = new Uint16Array(slots * 4);
 
         for (let s = 0; s < slots; s++) {
-            const r = registry.slotRect(s);
+            const r = blocks.slotRect(s);
             for (let i = 0; i < 4; i++) this.rects[s * 4 + i] = Math.round(r[i] * 65535);
         }
 
-        this.registry = registry;
+        this.blocks = blocks;
+        this.biomes = biomes;
     }
 
     mesh(chunk: Chunk): Mesh | null {
-        const { registry, buffers, rects } = this;
+        const { blocks, buffers, rects } = this;
         for (const b of buffers) b.reset();
         this.grids.fill(null);
         let minY = WORLD_HEIGHT, maxY = 0;
@@ -216,31 +219,31 @@ export class Mesher {
 
             for (let y = 0; y <= top; y++) {
                 const id = chunk.blocks[base + y];
-                const shape = registry.shape[id];
+                const shape = blocks.shape[id];
                 if (shape === Shape.NONE) continue;
 
-                const buf = buffers[registry.layer[id]];
+                const buf = buffers[blocks.layer[id]];
                 if (shape === Shape.CROSS) {
-                    const tint = registry.faceTint[id * 6 + Face.PY];
-                    buf.addCross(x, y, z, rects, registry.faceSlot[id * 6 + Face.PY], tint ? this.grid(tint as Tint, chunk) : null);
+                    const tint = blocks.faceTint[id * 6 + Face.PY];
+                    buf.addCross(x, y, z, rects, blocks.faceSlot[id * 6 + Face.PY], tint ? this.grid(tint as Tint, chunk) : null);
 
                     if (y < minY) minY = y;
                     if (y + 1 > maxY) maxY = y + 1;
                     continue;
                 }
 
-                const drop = registry.liquid[id] && chunk.block(x, y + 1, z) !== id ? LIQUID_DROP : 0;
+                const drop = blocks.liquid[id] && chunk.block(x, y + 1, z) !== id ? LIQUID_DROP : 0;
                 let emitted = false;
                 for (let face = 0; face < 6; face++) {
                     if (face === SKIP_FACE) continue;
                     
                     const nb = chunk.block(x + DX[face], y + DY[face], z + DZ[face]);
                     // skipped (hidden) if occludes or non-occluding neighbor is the same block (leaves/leaves, water/water)
-                    if (nb === id || registry.occludes[nb]) continue;
+                    if (nb === id || blocks.occludes[nb]) continue;
 
-                    const tint = registry.faceTint[id * 6 + face];
+                    const tint = blocks.faceTint[id * 6 + face];
                     buf.addFace(
-                        x, y, z, face, rects, registry.faceSlot[id * 6 + face],
+                        x, y, z, face, rects, blocks.faceSlot[id * 6 + face],
                         SHADE[face], tint ? this.grid(tint as Tint, chunk): null, drop
                     );
                     emitted = true;
@@ -270,7 +273,7 @@ export class Mesher {
         for (let gx = 0; gx < GRID; gx++) for (let gz = 0; gz < GRID; gz++) {
             let r = 0, gg = 0, b = 0;
             for (let dx = -1; dx <= 0; dx++) for (let dz = -1; dz <= 0; dz++) {
-                const biome = registry.get(chunk.biome(gx + dx, gz + dz));
+                const biome = this.biomes.get(chunk.biome(gx + dx, gz + dz));
                 this.colormap.color(tint, biome.temperature, biome.downfall, c);
                 
                 r += LIN[c[0]]; gg += LIN[c[1]]; b += LIN[c[2]];

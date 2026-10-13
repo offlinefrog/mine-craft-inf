@@ -1,6 +1,6 @@
 // rules from https://minecraft.wiki/w/World_generation#Biomes
 
-import { TEMPERATURE as T, HUMIDITY as H, CONTINENTALNESS as C, EROSION as E, WEIRDNESS as W, PEAKSVALLEYS as PV } from "../../world/climate";
+import { TEMPERATURE as T, HUMIDITY as H, CONTINENTALNESS as C, EROSION as E, WEIRDNESS as W, PEAKSVALLEYS as PV } from "../climate";
 import { and, byLevel, category, rule, thTable, type Box, type Category, type Cell, type Rule } from "./rules";
 
 const DESERT_ROW: readonly Cell[] = Array(5).fill("desert");
@@ -12,7 +12,7 @@ const WINDSWEPT_ROW: readonly Cell[] = [
     "windswept_gravelly_hills", "windswept_gravelly_hills", "windswept_hills", "windswept_forest", "windswept_forest"
 ];
 
-export const oceans = [
+const oceans = [
     rule("mushroom_fields", { continentalness: C.Mushroom }),
     ...byLevel(
         "temperature", { continentalness: C.Ocean },
@@ -24,15 +24,15 @@ export const oceans = [
     )
 ];
 
-export const beach = category(
+const beach = category(
     byLevel("temperature", {}, ["snowy_beach", "beach", "beach", "beach", "desert"])
 );
 
-export const badlands = category(
+const badlands = category(
     byLevel("humidity", {}, BADLANDS_ROW)
 );
 
-export const middle = category(thTable({}, [
+const middle = category(thTable({}, [
     [["snowy_plains", "ice_spikes"],        "snowy_plains", ["snowy_plains", "snowy_taiga"], "snowy_taiga",                               "taiga"],
     [["plains", "dappled_forest"],          "plains",       "forest",                        "taiga",                                     ["old_growth_spruce_taiga", "old_growth_pine_taiga"]],
     [["flower_forest", "sunflower_plains"], "plains",       "forest",                        ["birch_forest", "old_growth_birch_forest"], "dark_forest"],
@@ -40,7 +40,7 @@ export const middle = category(thTable({}, [
     DESERT_ROW
 ]));
 
-export const plateau = category(thTable({}, [
+const plateau = category(thTable({}, [
     [["snowy_plains", "ice_spikes"], "snowy_plains",             "snowy_plains",       "snowy_taiga",              "snowy_taiga"],
     [["meadow", "cherry_grove"],     "meadow",                   ["forest", "meadow"], ["taiga", "meadow"],        ["old_growth_spruce_taiga", "old_growth_pine_taiga"]],
     [["meadow", "cherry_grove"],     ["meadow", "cherry_grove"], ["meadow", "forest"], ["meadow", "birch_forest"], "pale_garden"],
@@ -48,7 +48,7 @@ export const plateau = category(thTable({}, [
     BADLANDS_ROW
 ]));
 
-export const shattered = category(thTable({}, [
+const shattered = category(thTable({}, [
     WINDSWEPT_ROW,
     WINDSWEPT_ROW,
     ["windswept_hills", "windswept_hills", "windswept_hills",    "windswept_forest",          "windswept_forest"],
@@ -129,7 +129,7 @@ const at = (
 
 const MID_FAR = [C.MidInland, C.FarInland] as const;
 
-export const inland: Rule[] = [
+const inland: Rule[] = [
     // E = 0
     ...river(at(E.L0, PV.Valleys, [C.Coast, C.NearInland])),
     ...middleOrBadlands(at(E.L0, PV.Valleys, MID_FAR)),

@@ -1,7 +1,7 @@
 import { MAX_FRAME_DT, PRIME_RADIUS } from "./config";
-import { colormap } from "./mesh/colormap";
+import { colormap } from "./world/blocks/colormap";
 import { loadColorMaps, loadPackImages } from "./mesh/load-pack";
-import { registry } from "./mesh/block-registry";
+import { registry } from "./world/blocks/block-registry";
 import { TextureAtlas } from "./render/atlas";
 import { createMaterials } from "./render/material";
 import { Observer } from "./render/observer";

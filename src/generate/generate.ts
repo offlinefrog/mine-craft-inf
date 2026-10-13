@@ -1,8 +1,8 @@
 // generation pipeline
 
 import { CHUNK_SIZE, WORLD_HEIGHT } from "../config";
-import { BIOME } from "../world/biome";
-import { BLOCK } from "../world/blocks";
+import { BIOME } from "../world/biomes/biomes";
+import { BLOCK } from "../world/blocks/blocks";
 import { Chunk } from "../world/chunk";
 
 const hash = (x: number, z: number): number => {

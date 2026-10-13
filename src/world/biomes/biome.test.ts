@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { BIOME_PROPS } from "../../world/biome";
+import { BIOME_PROPS } from "./biomes";
 import { BiomeRegistry } from "./biome-registry";
 import { RULES } from "./data";
 

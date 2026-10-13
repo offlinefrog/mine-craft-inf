@@ -1,8 +1,8 @@
-// biome tint colors based on https://minecraft.wiki/w/Biome#Tint
+// biome-based block tint colors based on https://minecraft.wiki/w/Biome#Tint
 
-import { Tint } from "../world/blocks";
+import { Tint } from "./blocks";
 
-export const COLORMAP_SIZE = 256;
+const COLORMAP_SIZE = 256;
 
 type RGB = readonly [number, number, number];
 
