@@ -1,4 +1,6 @@
 import { CHUNK_SIZE, WORLD_HEIGHT } from "../config";
+import type { BiomeID } from "./biome";
+import { BLOCK, type BlockID } from "./blocks";
 
 export const PADDED_SIZE = CHUNK_SIZE + 2;
 
@@ -14,16 +16,15 @@ export class Chunk {
     // 18 * 18 array of biomes at each block for generation
     readonly biomes = new Uint8Array(PADDED_SIZE * PADDED_SIZE);
 
-    constructor(cx: number, cz: number) {
+    constructor(cx = 0, cz = 0) {
         this.cx = cx; this.cz = cz;
     }
-
-    get key(): string { return `${this.cx},${this.cz}`; }
     
-    static column(x: number, z: number): number { return ((x + 1) * PADDED_SIZE + (z + 1)) * WORLD_HEIGHT; }
+    static base(x: number, z: number): number { return (x + 1) * PADDED_SIZE + (z + 1); }
+    static column(x: number, z: number): number { return Chunk.base(x, z) * WORLD_HEIGHT; }
     static index(x: number, y: number, z: number): number { return Chunk.column(x, z) + y; }
     
-    height(x: number, z: number): number { return this.heights[(x + 1) * PADDED_SIZE + z + 1]; }
+    height(x: number, z: number): number { return this.heights[Chunk.base(x, z)]; }
 
     block(x: number, y: number, z: number): BlockID {
         if (y < 0) return BLOCK.STONE;
@@ -32,7 +33,7 @@ export class Chunk {
     }
 
     biome(x: number, z: number): BiomeID {
-        return this.biomes[x * CHUNK_SIZE + z];
+        return this.biomes[Chunk.base(x, z)];
     }
 
     reset(cx: number, cz: number) {

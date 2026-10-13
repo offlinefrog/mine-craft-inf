@@ -2,6 +2,8 @@
 export const CHUNK_SIZE = 16;
 export const WORLD_HEIGHT = 256;
 
+export const VERTEX_SCALE = 16;
+
 // Observer
 export const FOV = 70;
 export const CAM_HEIGHT = 1.62;

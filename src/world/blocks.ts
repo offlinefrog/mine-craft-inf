@@ -40,8 +40,8 @@ export type RGB = [number, number, number];
 
 // block geometry - cross for simple vegetation
 export const Shape = { NONE: 0, CUBE: 1, CROSS: 2 } as const;
-// block rendering behavior - cutout for foliage, transluscent for blended textures
-export const Layer = { OPAQUE: 0, CUTOUT: 1, TRANSLUSCENT: 2 } as const;
+// block rendering behavior - cutout for foliage, translucent for blended textures
+export const Layer = { OPAQUE: 0, CUTOUT: 1, TRANSLUCENT: 2 } as const;
 // biome-dependent tints ordered by colormap from https://minecraft.wiki/w/Color#Biome-dependent
 export const Tint = { NONE: 0, GRASS: 1, FOLIAGE: 2, BIRCH: 3, SPRUCE: 4, DRY_FOLIAGE: 5, WATER: 6 } as const;
 
@@ -53,61 +53,71 @@ export interface BlockDef {
     shape: Shape;
     layer: Layer;
     occludes: boolean;
-    fallback: RGB;
-
-    tex?: { top: string; bottom?: string; side?: string };
-
-    tint?: Tint;
     liquid?: boolean;
+
+    tex?: { top: string; bottom: string; side: string };
+    tint?: Tint;
+
+    fallback: number;
 }
 
-const cube = (fallback: RGB, options: Partial<BlockDef> = {}): BlockDef =>
-    ({ shape: Shape.CUBE, layer: Layer. OPAQUE, occludes: true, fallback, ...options });
+interface CubeOptions {
+    top?: string; side?: string; bottom?: string;
+    layer?: Layer; occludes?: boolean; liquid?: boolean; tint?: Tint;
+}
+
+const cube = (name: string, fallback: number, o: CubeOptions = {}): BlockDef => ({
+    shape: Shape.CUBE,
+    layer: o.layer ?? Layer.OPAQUE,
+    occludes: o.occludes ?? true,
+    liquid: o.liquid,
+    tex: { top: o.top ?? name, bottom: o.bottom ?? name, side: o.side ?? name },
+    tint: o.tint,
+
+    fallback: fallback
+})
 
 export const BLOCK_DEFS: Record<BlockName, BlockDef> = {
-    air:                    { shape: Shape.NONE, layer: Layer.OPAQUE, occludes: false, fallback: [0, 0, 0] },
-    bedrock:                cube([0.22, 0.22, 0.22]),
-    brown_terracotta:       cube([0.45, 0.27, 0.22]),
-    calcite:                cube([0.84, 0.82, 0.77]),
-    coarse_dirt:            cube([0.42, 0.33, 0.20]),
-    deepslate:              cube([0.31, 0.31, 0.33]),
-    dirt:                   cube([0.45, 0.31, 0.19]),
-    grass_block:            cube([0.36, 0.62, 0.22], {
-        tex: { top: "grass_block_top", side: "grass_block_side", bottom: "dirt" }, tint: Tint.GRASS
+    air:                    { shape: Shape.NONE, layer: Layer.OPAQUE, occludes: false, fallback: 0x000000 },
+    bedrock:                cube("bedrock", 0x383838),
+    brown_terracotta:       cube("brown_terracotta", 0x734538),
+    calcite:                cube("calcite", 0xd6d1c4),
+    coarse_dirt:            cube("coarse_dirt", 0x6b5433),
+    deepslate:              cube("deepslate", 0x4f4f54),
+    dirt:                   cube("dirt", 0x734f30),
+    grass_block:            cube("grass_block", 0x5c9e38, {
+        top: "grass_block_top", side: "grass_block_side", bottom: "dirt", tint: Tint.GRASS
     }),
-    gravel:                 cube([0.55, 0.52, 0.50]),
-    ice:                    cube([0.62, 0.80, 0.95], {
-        layer: Layer.TRANSLUSCENT, occludes: false,
+    gravel:                 cube("gravel", 0x8c8580),
+    ice:                    cube("ice", 0x9eccf2, {
+        layer: Layer.TRANSLUCENT, occludes: false,
     }),
-    light_gray_terracotta:  cube([0.56, 0.53, 0.51]),
-    mud:                    cube([0.30, 0.24, 0.17]),
-    mycelium:               cube([0.48, 0.38, 0.43], {
-        tex: { top: "mycelium_top", side: "mycelium_side", bottom: "dirt" }
+    light_gray_terracotta:  cube("light_gray_terracotta", 0x8f8782),
+    mud:                    cube("mud", 0x4d3d2b),
+    mycelium:               cube("mycelium", 0x7a616e, {
+        top: "mycelium_top", side: "mycelium_side", bottom: "dirt"
     }),
-    orange_terracotta:      cube([0.65, 0.33, 0.15]),
-    packed_ice:             cube([0.56, 0.72, 0.90]),
-    podzol:                 cube([0.35, 0.24, 0.12], {
-        tex: { top: "podzol_top", side: "podzol_side", bottom: "dirt" }
+    orange_terracotta:      cube("orange_terracotta", 0xa65426),
+    packed_ice:             cube("packed_ice", 0x8fb8e6),
+    podzol:                 cube("podzol", 0x593d1f, {
+        top: "podzol_top", side: "podzol_side", bottom: "dirt"
     }),
-    powder_snow:            cube([0.90, 0.94, 1.00]),
-    red_sand:               cube([0.75, 0.40, 0.14]),
-    red_sandstone:          cube([0.68, 0.35, 0.17], {
-        tex: { top: "red_sandstone_top", side: "red_sandstone", bottom: "red_sandstone_bottom" }
+    powder_snow:            cube("powder_snow", 0xe60fff),
+    red_sand:               cube("red_sand", 0xbf6624),
+    red_sandstone:          cube("red_sandstone", 0xad592b, {
+        top: "red_sandstone_top", side: "red_sandstone", bottom: "red_sandstone_bottom"
     }),
-    red_terracotta:         cube([0.57, 0.25, 0.20]),
-    sand:                   cube([0.84, 0.78, 0.55]),
-    sandstone:              cube([0.80, 0.74, 0.50], {
-        tex: { top: "sandstone_top", side: "sandstone", bottom: "sandstone_bottom" }
+    red_terracotta:         cube("red_terracotta", 0x914033),
+    sand:                   cube("sand", 0xd6c78c),
+    sandstone:              cube("sandstone", 0xccbd80, {
+        top: "sandstone_top", side: "sandstone", bottom: "sandstone_bottom"
     }),
-    snow_block:             cube([0.95, 0.97, 1.00], {
-        tex: { top: "snow" }
+    snow_block:             cube("snow", 0xf2f7ff),
+    stone:                  cube("stone", 0x7a7a80),
+    terracotta:             cube("terracotta", 0x996147),
+    water:                  cube("water_still", 0x2e61cc, {
+        layer: Layer.TRANSLUCENT, occludes: false, liquid: true, tint: Tint.WATER,
     }),
-    stone:                  cube([0.48, 0.48, 0.50]),
-    terracotta:             cube([0.60, 0.38, 0.28]),
-    water:                  cube([0.18, 0.38, 0.80], {
-        layer: Layer.TRANSLUSCENT, occludes: false,
-        tex: { top: "water_still" }, tint: Tint.WATER, liquid: true,
-    }),
-    white_terracotta:       cube([0.90, 0.82, 0.75]),
-    yellow_terracotta:      cube([0.70, 0.52, 0.15]),
+    white_terracotta:       cube("white_terracotta", 0xe6d1bf),
+    yellow_terracotta:      cube("yellow_terractotta", 0xb38526),
 }

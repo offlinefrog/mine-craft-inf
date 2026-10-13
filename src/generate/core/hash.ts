@@ -1,5 +1,5 @@
 // 32-bit integer mixing
-function mix(h: number, v: number): number {
+export function mix(h: number, v: number): number {
     h = Math.imul(h ^ v, 0x9e3779b1);
     h ^= h >>> 15;
     h = Math.imul(h, 0x85ebca6b);

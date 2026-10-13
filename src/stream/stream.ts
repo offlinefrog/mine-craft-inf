@@ -1,6 +1,6 @@
 // Stream asynchronously generates Mesh for its StreamListener based on changes to the View
 
-import type { Mesh } from "../build/mesh";
+import type { Mesh } from "../mesh/mesh";
 import { BEHIND_DISTANCE, CHUNK_SIZE, LOOKAHEAD, MAX_INFLIGHT, REFRESH_STEP, SIDE_MARGIN, UNLOAD_MARGIN, WORLD_DEPTH } from "../config";
 
 export interface View {
@@ -121,6 +121,12 @@ export class Stream {
             if (e.state !== State.Ready && distance2(e, view.x, view.z) <= r2) return false;
         }
         return true;
+    }
+
+    reset() {
+        this.pending.length = 0;
+        for (const e of this.chunks.values()) this.remove(e);
+        this.x = Infinity;
     }
 
     dispose() {

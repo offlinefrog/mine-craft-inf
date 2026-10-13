@@ -2,42 +2,56 @@
 
 import * as THREE from "three";
 
-import type { AtlasSlot, BlockRegistry } from "../world/registry";
+import type { BlockRegistry } from "../mesh/block-registry";
+import { hash } from "../generate/core/hash";
+
+export type PackImage = CanvasImageSource & { width: number; height: number; }
+
+const MIN_TILE = 16; const MAX_TILE = 128;
 
 export class TextureAtlas {
-    texture!: THREE.CanvasTexture;
-    private registry: BlockRegistry;
+    private current!: THREE.CanvasTexture;
+    private readonly listeners: Array<(t: THREE.CanvasTexture) => void> = [];
 
-    rebuild?: () => void;
+    private readonly registry: BlockRegistry;
 
     constructor(registry: BlockRegistry) {
         this.registry = registry;
-        this.build(new Map());
+        this.build();
     }
 
-    build(images: Map<string, ImageBitmap>) {
-        let T = 16; // single texture (slot) size
-        // consider normalizing textures or using config setting
-        for (const im of images.values()) {
-            T = Math.max(T, Math.min(128, Math.min(im.width, im.height)));
-        }
+    get texture(): THREE.CanvasTexture { return this.current; }
 
-        const cols = this.registry.cols;
+    rebuild(fn: (t: THREE.CanvasTexture) => void) { this.listeners.push(fn); }
+
+    build(images: ReadonlyMap<string, PackImage> = new Map()) {
+        const { registry } = this;
+        const frame = (im: PackImage) => Math.min(im.width, im.height);
+
+        let tile = MIN_TILE;
+        // consider normalizing textures or using config setting
+        for (const name of registry.slotNames) {
+            const im = images.get(name);
+            if (im) tile = Math.max(tile, frame(im));
+        }
+        tile = Math.min(tile, MAX_TILE);
+
+        const cols = registry.columns;
         const canvas = document.createElement("canvas");
-        canvas.width = canvas.height = cols * T;
-        const ctx = canvas.getContext('2d')!;
+        canvas.width = canvas.height = cols * tile;
+        const ctx = canvas.getContext("2d")!;
         ctx.imageSmoothingEnabled = false;
 
-        this.registry.slots.forEach((slot, i) => {
-            const x = (i % cols) * T; // pixel coords
-            const y = Math.floor(i / cols) * T;
+        registry.slotNames.forEach((name, slot) => {
+            const dx = (slot % cols) * tile; // pixel coords
+            const dy = Math.floor(slot / cols) * tile;
+            const im = images.get(name);
 
-            const im = images.get(slot.name);
             if (im) {
-                const s = Math.min(im.width, im.height);
-                ctx.drawImage(im, 0, 0, s, s, x, y, T, T);
+                const s = frame(im);
+                ctx.drawImage(im, 0, 0, s, s, dx, dy, tile, tile);
             } else {
-                this.drawFallback(ctx, slot, i, x, y, T);
+                ctx.drawImage(fallback(registry.slotFallback[slot]), 0, 0, 16, 16, dx, dy, tile, tile);
             }
         });
 
@@ -45,25 +59,34 @@ export class TextureAtlas {
         texture.magFilter = texture.minFilter = THREE.NearestFilter;
         texture.generateMipmaps = false;
         texture.colorSpace = THREE.SRGBColorSpace;
-        this.texture?.dispose();
-        this.texture = texture;
-        this.rebuild?.();
+
+        const old = this.current;
+        this.current = texture;
+        for (const fn of this.listeners) fn(texture);
+        old?.dispose();
+    }
+}
+
+function fallback(color: number): HTMLCanvasElement {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = 16;
+    const ctx = canvas.getContext("2d")!;
+    const img = ctx.createImageData(16, 16);
+    
+    const r = (color >> 16) & 255;
+    const g = (color >> 8) & 255;
+    const b = color & 255;
+
+    for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) {
+        const i = (y * 16 + x) * 4;
+        const k = 0.88 + 0.24 * (hash(color, x, y) / 0x100000000);
+
+        img.data[i] = Math.min(255, r * k);
+        img.data[i + 1] = Math.min(255, g * k);
+        img.data[i + 2] = Math.min(255, b * k);
+        img.data[i + 3] = 255;
     }
 
-    // draws the fallback texture (color) when no texture is found
-    private drawFallback(
-        ctx: CanvasRenderingContext2D, s: AtlasSlot, slot: number,
-        x: number, y: number, T: number
-    ) {
-        const base = s.neutral ? [0.82, 0.82, 0.82] : s.color;
-        const px = T / 16;
-
-        for (let j = 0; j < 16; j++) for (let i = 0; i < 16; i++) {
-            const v = 0.9 + 0.2 * splitmix32(slot * 31 + i, j, slot);
-            const c = base.map((b) => Math.round(Math.min(1, b * v) * 255));
-
-            ctx.fillStyle = `rgb(${c[0]},${c[1]},${c[2]})`;
-            ctx.fillRect(x + Math.round(i * px), y + Math.round(j * px), Math.ceil(px), Math.ceil(px));
-        }
-    }
+    ctx.putImageData(img, 0, 0);
+    return canvas;
 }
