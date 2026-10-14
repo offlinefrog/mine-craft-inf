@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { BiomeSource } from "../biome-source";
+import { BiomeSource } from "../../generate/biome-source";
 import { BIOME_RULES } from "../../world/biomes/data";
 import { BIOME_COUNT } from "../../world/biomes/biomes";
 

@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { Chunk } from "../../world/chunk";
-import { createContext, type Context } from "../context";
+import { createContext, type Context } from "../../generate/context";
 import { BIOME_COUNT } from "../../world/biomes/biomes";
-import { Generator } from "../generate";
-import { biomes } from "../biomes-stage";
+import { Generator } from "../../generate/generate";
+import { biomes } from "../../generate/biomes-stage";
 import { CHUNK_SIZE } from "../../config";
 
 // prefill with sentinel
