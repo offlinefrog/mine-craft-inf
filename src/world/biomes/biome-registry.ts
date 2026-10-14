@@ -1,33 +1,9 @@
 import { BIOME_NAMES, BIOME_PROPS, biomeID, type Biome, type BiomeID, type BiomeName, type BiomeProps } from "./biomes";
-import { level, type ClimateSample } from "../climate";
-import { RULES } from "./data";
-import { buildGrid, stride, type Rule } from "./rules";
-
-class BiomeSource {
-    private readonly grid: Uint8Array;
-
-    constructor(grid: Uint8Array) {
-        this.grid = grid;
-    }
-
-    lookup(s: ClimateSample): BiomeID {
-        const i =
-            level("temperature", s.temperature) * stride.temperature +
-            level("humidity", s.humidity) * stride.humidity +
-            level("continentalness", s.continentalness) * stride.continentalness +
-            level("erosion", s.erosion) * stride.erosion +
-            level("weirdness", s.weirdness) * stride.weirdness +
-            level("peaksValleys", s.peaksValleys) * stride.peaksValleys;
-        return this.grid[i] as BiomeID;
-    }
-}
 
 export class BiomeRegistry {
     readonly biomes: readonly Biome[];
-    readonly source: BiomeSource;
 
-    constructor(props: Readonly<Record<BiomeName, BiomeProps>>, rules: readonly Rule[]) {
-        this.source = new BiomeSource(buildGrid(rules));
+    constructor(props: Readonly<Record<BiomeName, BiomeProps>> = BIOME_PROPS) {
         this.biomes = BIOME_NAMES.map((name): Biome => {
             const p = props[name];
             return {
@@ -39,12 +15,8 @@ export class BiomeRegistry {
         });
     }
 
-    get(id: BiomeID): Biome { return this.biomes[id]!; }
-    byName(name: BiomeName): Biome { return this.biomes[biomeID(name)]!; }
+    index(id: BiomeID): Biome { return this.biomes[id - 1]!; }
+    name(name: BiomeName): Biome { return this.biomes[biomeID(name) - 1]!; }
 
     get all(): readonly Biome[] { return this.biomes; }
-
-    // source lookup
 }
-
-export const registry = new BiomeRegistry(BIOME_PROPS, RULES);

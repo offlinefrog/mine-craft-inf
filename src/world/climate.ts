@@ -27,7 +27,7 @@ export const WEIRDNESS = { Neg: 0, Pos: 1 } as const;
 export const PEAKSVALLEYS = { Valleys: 0, Low: 1, Mid: 2, High: 3, Peaks: 4 } as const;
 
 // raw noise values generally within [-1, 1]
-export type ClimateSample = Readonly<Record<Axis, number>>;
+export type ClimateSample = Record<Axis, number>;
 
 export function level(axis: Axis, v: number): number {
     const t = THRESHOLDS[axis];

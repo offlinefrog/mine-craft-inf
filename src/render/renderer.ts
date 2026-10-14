@@ -4,9 +4,9 @@
 
 import * as THREE from "three";
 
-import { State, type Entry, type StreamListener } from "../stream/stream";
+import { EntryState, type Entry, type StreamListener } from "../stream/stream";
 import type { GeometryData, Mesh } from "../mesh/mesh";
-import type { ChunkMaterials } from "./material";
+import type { ChunkMaterials } from "./materials";
 import { CHUNK_SIZE, UPLOADS_PER_FRAME, VERTEX_SCALE, WORLD_HEIGHT } from "../config";
 
 export class Renderer implements StreamListener {
@@ -42,7 +42,7 @@ export class Renderer implements StreamListener {
     flush(maxChunks = UPLOADS_PER_FRAME) {
         while (maxChunks > 0 && this.queue.length > 0) {
             const { entry, mesh } = this.queue.shift()!;
-            if (entry.state === State.Unloaded) continue;
+            if (entry.state === EntryState.Unloaded) continue;
             maxChunks--;
 
             const S = VERTEX_SCALE;

@@ -3,7 +3,13 @@
 import * as THREE from "three";
 
 import { CAM_FAR, CAM_HEIGHT, CAM_NEAR, CAM_SPEED, FOV, HEIGHT_SMOOTHING } from "../config";
-import type { View } from "../stream/stream";
+
+export interface View {
+    x: number;
+    z: number;
+    fov: number;
+    aspect: number;
+}
 
 export class Observer {
     readonly camera: THREE.PerspectiveCamera;

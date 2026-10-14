@@ -200,4 +200,4 @@ const inland: Rule[] = [
     ...middle(at(E.L6, [PV.High, PV.Peaks], [C.Coast, C.FarInland])),
 ];
 
-export const RULES: readonly Rule[] = [...oceans, ...inland];
+export const BIOME_RULES: readonly Rule[] = [...oceans, ...inland];

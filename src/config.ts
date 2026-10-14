@@ -1,3 +1,7 @@
+//const q = new URLSearchParams(location.search);
+//export const SEED = Number(q.get('seed') ?? 1337);
+export const SEED = 1337;
+
 // World
 export const CHUNK_SIZE = 16;
 export const WORLD_HEIGHT = 256;

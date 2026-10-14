@@ -20,7 +20,10 @@ export class BlockRegistry {
 
     readonly columns: number;
 
-    constructor(names: readonly string[], defs: Record<BlockName, BlockDef>) {
+    constructor(
+        names: readonly string[] = BLOCK_NAMES,
+        defs: Record<BlockName, BlockDef> = BLOCK_DEFS
+    ) {
         if (names[0] !== "air") throw new Error('BlockID 0 must be "air"');
         const n = names.length;
 
@@ -114,5 +117,3 @@ function fallback(texture: string, defs: Record<BlockName, BlockDef>): number {
 
     throw new Error(`Cannot infer fallback color for texture "${texture}". Add an entry to FALLBACK_OWNER`);
 }
-
-export const registry = new BlockRegistry(BLOCK_NAMES, BLOCK_DEFS);

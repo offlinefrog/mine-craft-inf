@@ -273,7 +273,7 @@ export class Mesher {
         for (let gx = 0; gx < GRID; gx++) for (let gz = 0; gz < GRID; gz++) {
             let r = 0, gg = 0, b = 0;
             for (let dx = -1; dx <= 0; dx++) for (let dz = -1; dz <= 0; dz++) {
-                const biome = this.biomes.get(chunk.biome(gx + dx, gz + dz));
+                const biome = this.biomes.index(chunk.biome(gx + dx, gz + dz));
                 this.colormap.color(tint, biome.temperature, biome.downfall, c);
                 
                 r += LIN[c[0]]; gg += LIN[c[1]]; b += LIN[c[2]];

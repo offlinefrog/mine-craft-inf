@@ -3,9 +3,9 @@ import * as THREE from "three";
 import type { TextureAtlas } from "./atlas";
 
 export interface ChunkMaterials {
-    opaque: THREE.Material;
-    cutout: THREE.Material;
-    translucent: THREE.Material;
+    opaque: THREE.MeshBasicMaterial;
+    cutout: THREE.MeshBasicMaterial;
+    translucent: THREE.MeshBasicMaterial;
 }
 
 export function createMaterials(atlas: TextureAtlas): ChunkMaterials {

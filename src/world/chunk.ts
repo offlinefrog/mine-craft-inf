@@ -2,9 +2,17 @@ import { CHUNK_SIZE, WORLD_HEIGHT } from "../config";
 import type { BiomeID } from "./biomes/biomes";
 import { BLOCK, type BlockID } from "./blocks/blocks";
 
+export const ChunkStatus = {
+    Empty: 0,
+    Biomes: 1,
+} as const;
+export type ChunkStatus = typeof ChunkStatus[keyof typeof ChunkStatus];
+
 export const PADDED_SIZE = CHUNK_SIZE + 2;
 
 export class Chunk {
+    status: ChunkStatus = ChunkStatus.Empty;
+
     cx: number;    // chunk coordinates relative to world origin
     cz: number;
 
@@ -13,7 +21,7 @@ export class Chunk {
     // 18 * 18 array of column heights of chunk, padded by 1 (neighbors)
     readonly heights = new Int16Array(PADDED_SIZE * PADDED_SIZE);
 
-    // 18 * 18 array of biomes at each block for generation
+    // 18 * 18 array of biomes at each column for generation
     readonly biomes = new Uint8Array(PADDED_SIZE * PADDED_SIZE);
 
     constructor(cx = 0, cz = 0) {
@@ -38,5 +46,9 @@ export class Chunk {
 
     reset(cx: number, cz: number) {
         this.cx = cx; this.cz = cz;
+        this.status = ChunkStatus.Empty;
+        this.biomes.fill(0);
+        this.heights.fill(0);
+        this.blocks.fill(0);
     }
 }

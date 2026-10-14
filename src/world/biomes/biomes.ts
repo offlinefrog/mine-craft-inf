@@ -59,11 +59,16 @@ export const BIOME_NAMES = [
 ] as const;
 export type BiomeName = (typeof BIOME_NAMES)[number];
 
-// export const BIOME_COUNT = BIOME_NAMES.length; // < 256 -> Uint8Array
+export const BIOME_COUNT = BIOME_NAMES.length; // < 256 -> Uint8Array
 
-export const BIOME = Object.fromEntries(
-    BIOME_NAMES.map((n, i) => [n.toUpperCase(), i])
-) as { readonly [K in BiomeName as Uppercase<K>]: number };
+export const BIOME = {
+    NONE: 0,
+    ...Object.fromEntries(
+        BIOME_NAMES.map((n, i) => [n.toUpperCase(), i + 1])
+    )
+} as { readonly NONE: 0 } & {
+    readonly [K in BiomeName as Uppercase<K>]: number;
+}
 export type BiomeID = typeof BIOME[keyof typeof BIOME];
 export const biomeID = (name: BiomeName): BiomeID => BIOME[name.toUpperCase() as Uppercase<BiomeName>];
 

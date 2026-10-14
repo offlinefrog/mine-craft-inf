@@ -65,5 +65,3 @@ export class Colormap {
         out[2] = fixed ? fixed[2] : 255;
     }
 }
-
-export const colormap = new Colormap();
