@@ -6,7 +6,7 @@ export type Axis = (typeof AXES)[number];
 const THRESHOLDS: Readonly<Record<Axis, readonly number[]>> = {
     temperature:        [-0.45, -0.15, 0.2, 0.55],                  // 5 levels
     humidity:           [-0.35, -0.10, 0.1, 0.30],                  // 5 levels
-    continentalness:    [-1.05, -0.455, -0.190, -0.11, 0.03, 0.30], // 7 levels
+    continentalness:    [-1.35, -0.455, -0.190, -0.11, 0.03, 0.30], // 7 levels
     erosion:            [-0.78, -0.375, -0.2225, 0.05, 0.45, 0.55], // 7 levels
     weirdness:          [0],                                        // 2 levels
     peaksValleys:       [-0.85, -0.2, 0.2, 0.7]                     // 5 levels

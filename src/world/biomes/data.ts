@@ -190,7 +190,7 @@ const inland: Rule[] = [
     ...shatteredOrWindswept(at(E.L5, PV.Peaks, [C.Coast, C.NearInland])),
     ...shattered(at(E.L5, PV.Peaks, MID_FAR)),
 
-    // ===== E=6 =====
+    // E = 6
     ...river(at(E.L6, PV.Valleys, C.Coast)),
     ...swampRiver(at(E.L6, PV.Valleys, [C.NearInland, C.FarInland])),
     ...beach(at(E.L6, PV.Low, C.Coast)),

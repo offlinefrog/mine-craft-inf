@@ -1,11 +1,11 @@
 import { Generator } from "../generate/generate";
 import type { BlockID } from "../world/blocks/blocks";
-import { CHUNK_SIZE, SEED } from "../config";
+import { CHUNK_SIZE } from "../config";
 import { createContext } from "../generate/context";
 import { Chunk } from "../world/chunk";
 import { BiomeRegistry } from "../world/biomes/biome-registry";
 
-const CHUNKS_PER_SCREEN_X = 150;
+const CHUNKS_PER_SCREEN_X = 250;
 const BLOCK_SIZE = window.screen.availWidth / (CHUNKS_PER_SCREEN_X * CHUNK_SIZE);
 
 const BIOME_COLORS: readonly string[] = [
@@ -137,7 +137,7 @@ tooltip.style.cssText = `
 `;
 document.body.appendChild(tooltip);
 
-const context = createContext(SEED);
+const context = createContext(12345);
 const generator = new Generator(context);
 const chunks = new Map<string, Chunk>();
 
@@ -206,6 +206,7 @@ function renderScreen() {
     header.textContent =
         `Chunks: (${minCX}, ${minCZ}) → ` +
         `(${minCX + chunksX - 1}, ${minCZ + chunksZ - 1})` +
+        `: ${chunksX * chunksZ} chunks, ${worldWidth * worldHeight / 16} blocks` +
         ` | Block size: ${BLOCK_SIZE.toFixed(2)}px` +
         ` | Cached: ${chunks.size}`;
 

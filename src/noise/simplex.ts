@@ -22,7 +22,7 @@ const GRAD_Z = new Float64Array([
 const OUTPUT_SCALE = 99;
 
 // sd of one octave of noise to normalize octave sums
-export const SIMPLEX_SD = 0.5393;
+export const SIMPLEX_SD = 0.5385;
 
 // seeded, 2D simplex noise within [-1, 1], salt for independent permutation per layer
 export class Simplex2D {
