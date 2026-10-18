@@ -182,8 +182,8 @@ function resizeMap() {
 function renderScreen() {
     const pixels = image.data;
 
-    for (let pz = 0; pz < worldHeight; pz++) {
-        for (let px = 0; px < worldWidth; px++) {
+    for (let px = 0; px < worldWidth; px++) {
+        for (let pz = 0; pz < worldHeight; pz++) {
             const cx = minCX + Math.floor(px / CHUNK_SIZE);
             const cz = minCZ + Math.floor(pz / CHUNK_SIZE);
             const x = px % CHUNK_SIZE;

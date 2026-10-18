@@ -5,6 +5,7 @@ import { BLOCK, type BlockID } from "./blocks/blocks";
 export const ChunkStatus = {
     Empty: 0,
     Biomes: 1,
+    Noise: 2,
 } as const;
 export type ChunkStatus = typeof ChunkStatus[keyof typeof ChunkStatus];
 

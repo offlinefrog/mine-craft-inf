@@ -4,7 +4,8 @@ export const SEED = 1337;
 
 // World
 export const CHUNK_SIZE = 16;
-export const WORLD_HEIGHT = 256;
+export const WORLD_HEIGHT = 384;
+export const SEA_LEVEL = 63;
 
 export const VERTEX_SCALE = 16;
 

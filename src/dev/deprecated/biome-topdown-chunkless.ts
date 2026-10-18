@@ -1,7 +1,7 @@
-import { CHUNK_SIZE } from "../config";
-import { newClimateSample } from "../generate/climate-source";
-import { createContext } from "../generate/context";
-import { BiomeRegistry } from "../world/biomes/biome-registry";
+import { CHUNK_SIZE } from "../../config";
+import { newClimateSample } from "../../generate/climate-source";
+import { createContext } from "../../generate/context";
+import { BiomeRegistry } from "../../world/biomes/biome-registry";
 
 const CHUNKS_PER_SCREEN_X = 250;
 const BLOCK_SIZE = window.screen.availWidth / (CHUNKS_PER_SCREEN_X * CHUNK_SIZE);

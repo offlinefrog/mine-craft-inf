@@ -30,3 +30,4 @@ src_old
 test
 biome-regions
 terrain-preview
+src/generate/generate.deprecated.ts
