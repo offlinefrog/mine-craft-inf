@@ -16,4 +16,5 @@ Complete (for now):
 - Asynchronous chunk loading
 
 Dev tools and extra features:
-- Visual top-down biome map for noise calibration
+- Visual top-down map for noise calibration
+    - Supported modes: biomes, noise (terrain)
