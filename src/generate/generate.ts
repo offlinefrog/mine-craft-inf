@@ -1,7 +1,7 @@
 import type { Chunk } from "../world/chunk";
-import { biomes } from "./biomes-stage";
+import { biomes } from "./stage/biomes-stage";
 import type { Context, Stage } from "./context";
-import { noise } from "./noise-stage";
+import { noise } from "./stage/noise-stage";
 
 const STAGES: Stage[] = [biomes, noise];
 

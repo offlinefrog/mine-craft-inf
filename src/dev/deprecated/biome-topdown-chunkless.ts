@@ -1,5 +1,5 @@
 import { CHUNK_SIZE } from "../../config";
-import { newClimateSample } from "../../generate/climate-source";
+import { newClimateSample } from "../../generate/source/climate-source";
 import { createContext } from "../../generate/context";
 import { BiomeRegistry } from "../../world/biomes/biome-registry";
 

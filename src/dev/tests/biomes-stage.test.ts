@@ -3,7 +3,7 @@ import { Chunk } from "../../world/chunk";
 import { createContext, type Context } from "../../generate/context";
 import { BIOME_COUNT } from "../../world/biomes/biomes";
 import { Generator } from "../../generate/generate";
-import { biomes } from "../../generate/biomes-stage";
+import { biomes } from "../../generate/stage/biomes-stage";
 import { CHUNK_SIZE } from "../../config";
 
 // prefill with sentinel

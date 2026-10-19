@@ -1,9 +1,9 @@
-import { CHUNK_SIZE, WORLD_HEIGHT } from "../config";
-import { BLOCK } from "../world/blocks/blocks";
-import { Chunk, ChunkStatus } from "../world/chunk";
-import { newClimateSample } from "./climate-source";
-import type { Context, Stage } from "./context";
-import { CELL_H, CELL_W, newTerrainShape } from "./terrain-source";
+import { CHUNK_SIZE, WORLD_HEIGHT } from "../../config";
+import { BLOCK } from "../../world/blocks/blocks";
+import { Chunk, ChunkStatus } from "../../world/chunk";
+import { newClimateSample } from "../source/climate-source";
+import type { Context, Stage } from "../context";
+import { CELL_H, CELL_W, newTerrainShape } from "../source/terrain-source";
 
 /**
  *  noise stage: STONE where density > 0, WATER below sea level where density <= 0, otherwise AIR

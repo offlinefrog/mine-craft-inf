@@ -1,7 +1,7 @@
-import { SEA_LEVEL, WORLD_HEIGHT } from "../config";
-import { OctaveNoise3, type Octave3Config } from "../noise/perlin3";
-import { Spline, type SplinePoint } from "../noise/spline";
-import type { ClimateSample } from "../world/climate";
+import { SEA_LEVEL, WORLD_HEIGHT } from "../../config";
+import { OctaveNoise3, type Octave3Config } from "../../noise/perlin3";
+import { Spline, type SplinePoint } from "../../noise/spline";
+import type { ClimateSample } from "../../world/climate";
 
 // density lattice, vanilla sized
 export const CELL_W = 4;

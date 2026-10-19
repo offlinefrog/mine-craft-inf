@@ -1,4 +1,4 @@
-import { BIOME_NAMES, type BiomeName } from "./biomes";
+import type { BiomeName } from "./biomes";
 import { AXES, LEVEL_COUNT, WEIRDNESS as W, type Axis } from "../climate";
 
 export type Range = readonly [number, number];

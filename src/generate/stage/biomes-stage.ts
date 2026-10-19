@@ -1,7 +1,7 @@
-import { CHUNK_SIZE } from "../config";
-import { Chunk, ChunkStatus } from "../world/chunk";
-import { newClimateSample } from "./climate-source";
-import type { Context, Stage } from "./context";
+import { CHUNK_SIZE } from "../../config";
+import { Chunk, ChunkStatus } from "../../world/chunk";
+import { newClimateSample } from "../source/climate-source";
+import type { Context, Stage } from "../context";
 
 export const biomes: Stage = {
     status: ChunkStatus.Biomes,

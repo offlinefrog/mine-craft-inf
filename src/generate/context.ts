@@ -1,8 +1,8 @@
-import { BiomeSource } from "./biome-source";
+import { BiomeSource } from "./source/biome-source";
 import type { Rule } from "../world/biomes/rules";
-import { ClimateSource, type ClimateConfig } from "./climate-source";
+import { ClimateSource, type ClimateConfig } from "./source/climate-source";
 import type { Chunk, ChunkStatus } from "../world/chunk";
-import { TerrainSource, type TerrainConfig } from "./terrain-source";
+import { TerrainSource, type TerrainConfig } from "./source/terrain-source";
 
 export interface Stage {
     readonly status: ChunkStatus;

@@ -1,17 +1,23 @@
-// Renderer creates Three.js Mesh objects from the given Mesh out of the provided Materials and adds to the Scene
-//  acts as a StreamListener for Stream
-//  depending on Mesh data, different Materials can be used for different rendering maps
+// Renderer turns finished Meshes into Three.js Objects and removes on unload
 
 import * as THREE from "three";
 
-import { EntryState, type Entry, type StreamListener } from "../stream/stream";
-import type { GeometryData, Mesh } from "../mesh/mesh";
+import type { Entry, StreamListener } from "../stream/stream";
+import { VERTEX_SCALE, type GeometryData, type Mesh } from "../build/mesh";
 import type { ChunkMaterials } from "./materials";
-import { CHUNK_SIZE, UPLOADS_PER_FRAME, VERTEX_SCALE, WORLD_HEIGHT } from "../config";
+import { CHUNK_SIZE, UPLOAD_VERTEX_BUDGET } from "../config";
+
+const vertices = (g: GeometryData | null): number => (g ? g.attributes.position!.array.length / 3 : 0);
+const meshVertices = (m: Mesh): number => vertices(m.opaque) + vertices(m.cutout) + vertices(m.translucent);
+
+// frees CPU copy when passed to GPU (chunks are static). unsafe for wireframes, raycast against chunks, or recovery from lost WebGL context
+function releaseAfterUpload(attr: THREE.BufferAttribute): THREE.BufferAttribute {
+    return attr.onUpload(() => { (attr as unknown as { array: unknown }).array = null; });
+}
 
 export class Renderer implements StreamListener {
-    private readonly queue: { entry: Entry, mesh: Mesh }[] = [];
-    private readonly live = new Map<Entry, THREE.Mesh[]>();
+    private readonly queue = new Map<Entry, Mesh>();        // finished, waiting for upload, oldest first
+    private readonly live = new Map<Entry, THREE.Mesh[]>(); // in scene
 
     private readonly scene: THREE.Scene;
     private readonly materials: ChunkMaterials;
@@ -20,26 +26,39 @@ export class Renderer implements StreamListener {
         this.scene = scene; this.materials = mats;
     }
 
-    get queued(): number { return this.queue.length; }
+    get queued(): number { return this.queue.size; }
+    get drawn(): number { return this.live.size; }
 
     ready(entry: Entry, mesh: Mesh | null) {
-        if (mesh && (mesh.opaque || mesh.cutout || mesh.translucent)) this.queue.push({ entry, mesh });
+        if (mesh) this.queue.set(entry, mesh); // mesher returns null when nothing is visible
     }
 
-    unload(entry: Entry) {
-        const meshes = this.live.get(entry);
-        if (!meshes) return;
+    unload(entry: Entry) { // releases mesh array objects immediately
+        this.queue.delete(entry);
+        const objects = this.live.get(entry);
+        if (!objects) return;
 
-        for (const m of meshes) {
-            this.scene.remove(m);
-            m.geometry.dispose();
+        for (const o of objects) {
+            this.scene.remove(o);
+            o.geometry.dispose(); // materials are shared (not disposed here)
         }
 
         this.live.delete(entry);
     }
 
-    // flush meshes and make meshes
-    flush(maxChunks = UPLOADS_PER_FRAME) {
+    // adds queued meshes to scene until vertex budget is spent (at least one)
+    flush(vertexBudget = UPLOAD_VERTEX_BUDGET) {
+        let budget = vertexBudget;
+        for (const [entry, mesh] of this.queue) {
+            const cost = meshVertices(mesh);
+            
+            if (budget < vertexBudget && cost > budget) break;
+            
+            this.queue.delete(entry);
+            this.add(entry, mesh);
+            budget -= cost;
+        }
+        /**
         while (maxChunks > 0 && this.queue.length > 0) {
             const { entry, mesh } = this.queue.shift()!;
             if (entry.state === EntryState.Unloaded) continue;
@@ -63,26 +82,56 @@ export class Renderer implements StreamListener {
             for (const m of meshes) this.scene.add(m);
             this.live.set(entry, meshes);
         }
+        */
+    }
+
+    dispose() {
+        for (const entry of [...this.live.keys()]) this.unload(entry);
+        this.queue.clear();
+    }
+
+    private add(entry: Entry, mesh: Mesh) {
+        const S = VERTEX_SCALE;
+
+        const halfXZ = (CHUNK_SIZE * S) / 2;
+        const halfY = ((mesh.yMax - mesh.yMin) * S) / 2;
+        
+        const sphere = new THREE.Sphere(
+            new THREE.Vector3(halfXZ, mesh.yMin * S + halfY, halfXZ),
+            Math.hypot(halfXZ, halfY, halfXZ),
+        );
+
+        const layers: [GeometryData | null, THREE.Material, number][] = [
+            [mesh.opaque, this.materials.opaque, 0],
+            [mesh.cutout, this.materials.cutout, 0],
+            [mesh.translucent, this.materials.translucent, 1],
+        ];
+        
+        const objects: THREE.Mesh[] = [];
+        for (const [data, material, order] of layers) {
+            if (data) objects.push(this.makeMesh(entry, data, material, sphere, order));
+        }
+
+        for (const o of objects) this.scene.add(o);
+        this.live.set(entry, objects);
     }
 
     private makeMesh(
         entry: Entry,
         data: GeometryData,
         material: THREE.Material,
-        bounds: THREE.Box3,
-        renderOrder: number
+        sphere: THREE.Sphere,
+        order: number
     ): THREE.Mesh {
         const geometry = new THREE.BufferGeometry();
         for (const [name, a] of Object.entries(data.attributes)) {
-            geometry.setAttribute(name, new THREE.BufferAttribute(a.array, a.itemSize, a.normalized ?? false));
+            geometry.setAttribute(name, releaseAfterUpload(new THREE.BufferAttribute(a.array, a.itemSize, a.normalized ?? false)));
         }
-        geometry.setIndex(new THREE.BufferAttribute(data.index, 1));
-
-        geometry.boundingBox = bounds.clone();
-        geometry.boundingSphere = bounds.getBoundingSphere(new THREE.Sphere());
+        geometry.setIndex(releaseAfterUpload(new THREE.BufferAttribute(data.index, 1)));
+        geometry.boundingSphere = sphere;
 
         const mesh = new THREE.Mesh(geometry, material);
-        mesh.renderOrder = renderOrder;
+        mesh.renderOrder = order;
         mesh.position.set(entry.cx * CHUNK_SIZE, 0, entry.cz * CHUNK_SIZE);
         mesh.scale.setScalar(1 / VERTEX_SCALE);
 

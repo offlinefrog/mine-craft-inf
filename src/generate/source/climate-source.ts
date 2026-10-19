@@ -1,5 +1,5 @@
-import { OctaveNoise, type OctaveConfig } from "../noise/octave";
-import { AXES, type Axis, type ClimateSample } from "../world/climate";
+import { OctaveNoise, type OctaveConfig } from "../../noise/octave";
+import { AXES, type Axis, type ClimateSample } from "../../world/climate";
 
 interface AxisConfig extends OctaveConfig {
     spread: number; // sd of final value before bind to [-1, 1]
@@ -22,40 +22,6 @@ type SampleAxis = Exclude<Axis, "peaksValleys">;
 export interface ClimateConfig {
     axes: Record<SampleAxis, AxisConfig>;
     warp: WarpConfig;
-}
-
-/**
- * (done) fix SIMPLEX_SD.
- * (done) adjust continentalness spread, offset for less lo-C, more hi-C.
- * raise mid-octave amplitudes to for more irregular coasts
- * (done) raise warp strength for more organic shapes (keep under wavelength / 4)
- * lower wavelengths and add octaves on temp and humidity for more variety
- * increase spread on temp and humidity for more rare biomes
- * (done) raise wavelength on weirdness for slower PV -> larger, smoother rivers and peaks
- * offset weirdness for more/less rare biomes
- * (done) raise wavelength, remove octaves, lower strength of warp for less jaggedness
- */
-
-const DEPRECATED_CLIMATE_CONFIG_1: ClimateConfig = {
-    axes: {
-        temperature:     { wavelength: 1792, amplitudes: [1, 1.5, 2, 2],         spread: 0.48 },
-        humidity:        { wavelength: 1280, amplitudes: [1, 1.5, 1, 0.5],       spread: 0.48 },
-        continentalness: { wavelength: 1280, amplitudes: [1, 1.5, 2, 2, 1.5, 1], spread: 0.55, offset: 0.3 },
-        erosion:         { wavelength: 1024, amplitudes: [1, 1, 0.25],           spread: 0.38 },
-        weirdness:       { wavelength: 1280, amplitudes: [1, 0.5],               spread: 0.38 },
-    },
-    warp: { wavelength: 1024, amplitudes: [1, 0.5], strength: 16 }
-}
-
-const DEPRECATED_CLIMATE_CONFIG_2: ClimateConfig = {
-    axes: {
-        temperature:     { wavelength: 1024, amplitudes: [1.5, 0, 1], spread: 0.39, offset: 0.04 },
-        humidity:        { wavelength: 256, amplitudes: [1, 1], spread: 0.50 },
-        continentalness: { wavelength: 512,  amplitudes: [1, 1, 2, 2, 2, 1, 1, 1, 1], spread: 0.5, offset: 0.05 },
-        erosion:         { wavelength: 512, amplitudes: [1, 1, 0, 1, 1], spread: 0.50 },
-        weirdness:       { wavelength: 128, amplitudes: [1, 2, 1], spread: 0.50 },
-    },
-    warp: { wavelength: 32, amplitudes: [1, 1, 1], strength: 3 }
 }
 
 /**

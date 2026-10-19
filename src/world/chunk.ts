@@ -45,11 +45,9 @@ export class Chunk {
         return this.biomes[Chunk.base(x, z)];
     }
 
-    reset(cx: number, cz: number) {
+    reset(cx: number, cz: number, clear = true) {
         this.cx = cx; this.cz = cz;
         this.status = ChunkStatus.Empty;
-        this.biomes.fill(0);
-        this.heights.fill(0);
-        this.blocks.fill(0);
+        if (clear) { this.biomes.fill(0); this.heights.fill(0); this.blocks.fill(0); }
     }
 }

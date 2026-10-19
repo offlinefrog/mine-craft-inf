@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { ClimateSource, DEFAULT_CLIMATE_CONFIG, newClimateSample } from "../../generate/climate-source";
+import { describe, it } from "vitest";
+import { ClimateSource, DEFAULT_CLIMATE_CONFIG, newClimateSample } from "../../generate/source/climate-source";
 import { AXES, level, LEVEL_COUNT, type Axis } from "../../world/climate";
 import { hash } from "../../noise/hash";
 

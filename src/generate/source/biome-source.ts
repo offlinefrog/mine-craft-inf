@@ -1,7 +1,7 @@
-import { AXES, level, LEVEL_COUNT, type Axis, type ClimateSample } from "../world/climate";
-import { BIOME, BIOME_NAMES, biomeID, type BiomeID } from "../world/biomes/biomes";
-import { BIOME_RULES } from "../world/biomes/data";
-import { levelsFor, type Box, type Rule } from "../world/biomes/rules";
+import { AXES, level, LEVEL_COUNT, type Axis, type ClimateSample } from "../../world/climate";
+import { BIOME, BIOME_NAMES, biomeID, type BiomeID } from "../../world/biomes/biomes";
+import { BIOME_RULES } from "../../world/biomes/data";
+import { levelsFor, type Box, type Rule } from "../../world/biomes/rules";
 
 const CELL_COUNT = AXES.reduce((n, a) => n * LEVEL_COUNT[a], 1); // 12,250 cells
 const UNSET = BIOME.NONE;

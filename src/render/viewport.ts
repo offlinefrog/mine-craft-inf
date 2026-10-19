@@ -16,11 +16,11 @@ export class Viewport {
         this.gl = new THREE.WebGLRenderer({ canvas, antialias: false });
         this.scene.background = new THREE.Color(SKY);
 
-        this.resize();
-        window.addEventListener("resize", this.resize);
-
         this.canvas = canvas;
         this.observer = observer;
+        
+        this.resize();
+        window.addEventListener("resize", this.resize);
     }
 
     private readonly resize = (): void => {
